@@ -5,14 +5,19 @@ class Lexer
     @tokens = []
     i = 0
     while @chunk = sql.slice(i)
-      i += @keywordToken() or
-           @starToken() or
-           @operatorToken() or
-           @conditionalToken() or
-           @numberToken() or
-           @stringToken() or
-           @whitespaceToken() or
-           @literalToken()
+      bytesConsumed =  @keywordToken() or
+                       @starToken() or
+                       @functionToken() or
+                       @seperatorToken() or
+                       @operatorToken() or
+                       @conditionalToken() or
+                       @numberToken() or
+                       @stringToken() or
+                       @parensToken() or
+                       @whitespaceToken() or
+                       @literalToken()
+      throw new Error("NOTHING CONSUMED: Stopped at - '#{@chunk.slice(0,30)}'") if bytesConsumed < 1
+      i += bytesConsumed
   
   token: (name, value) ->
     console.log(name, value)
@@ -39,25 +44,31 @@ class Lexer
   keywordToken:     -> @tokenizeFromList('KEYWORD', SQL_KEYWORDS)
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
+  functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
   
   starToken:        -> @tokenizeFromRegex('STAR', STAR)
+  seperatorToken:   -> @tokenizeFromRegex('SEPERATOR', SEPERATOR)
   whitespaceToken:  -> @tokenizeFromRegex('WHITESPACE', WHITESPACE, 0, 0, @preserveWhitespace)
-  literalToken:     -> @tokenizeFromRegex('LITERAL', LITERAL)
+  literalToken:     -> @tokenizeFromRegex('LITERAL', LITERAL, 1, 0)
   numberToken:      -> @tokenizeFromRegex('NUMBER', NUMBER)
   stringToken:      -> @tokenizeFromRegex('STRING', STRING, 1, 0)
+  parensToken:      -> 
+    @tokenizeFromRegex('LEFT_PAREN', /^\(/,) or @tokenizeFromRegex('RIGHT_PAREN', /^\)/,)
   
   
   
-  SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE']
+  SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'AS']
+  SQL_FUNCTIONS       = ['COUNT', 'MIN', 'MAX']
   SQL_OPERATORS       = ['=']
   SQL_CONDITIONALS    = ['AND']
   STAR                = /^\*/
+  SEPERATOR           = /^,/
   WHITESPACE          = /^ +/
-  LITERAL             = /^[a-z_][a-z0-9_]+/i
+  LITERAL             = /^`?([a-z_][a-z0-9_]{0,})`?/i
   NUMBER              = /^[0-9]+/
   STRING              = /^'(.*?)'/
   
   
   
-exports.tokenize = (sql) -> (new Lexer(sql)).tokens
+exports.tokenize = (sql, opts) -> (new Lexer(sql, opts)).tokens
 
