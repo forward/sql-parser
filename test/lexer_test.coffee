@@ -8,6 +8,11 @@ lexer = require('../lib/lexer')
 # 
 # console.log(tokens)
 
-tokens = lexer.tokenize("SELECT x AS `first_name`, min(age) FROM my_stream GROUP BY age, name")
+tokens = lexer.tokenize """
+  SELECT x AS `first_name`, min(age) 
+  FROM my_stream 
+  GROUP BY age, name 
+  ORDER BY age DESC 
+  HAVING COUNT(*) > 5"""
 
 console.log(tokens)
