@@ -20,9 +20,9 @@ class Lexer
                        @literalToken()
       throw new Error("NOTHING CONSUMED: Stopped at - '#{@chunk.slice(0,30)}'") if bytesConsumed < 1
       i += bytesConsumed
+    @token('EOF', '')
   
   token: (name, value) ->
-    console.log(name, value)
     @tokens.push([name, value, @currentLine])
   
   tokenizeFromRegex: (name, regex, part=0, lengthPart=part, output=true) ->
