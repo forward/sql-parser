@@ -60,7 +60,7 @@ class Lexer
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
   functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
-  sortOrderToken:   -> @tokenizeFromList('ORDER', SQL_SORT_ORDERS)
+  sortOrderToken:   -> @tokenizeFromList('DIRECTION', SQL_SORT_ORDERS)
   
   starToken:        -> @tokenizeFromRegex('STAR', STAR)
   seperatorToken:   -> @tokenizeFromRegex('SEPARATOR', SEPARATOR)

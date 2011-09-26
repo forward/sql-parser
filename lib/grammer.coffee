@@ -24,6 +24,8 @@ grammar =
   SelectQuery: [
     o 'SelectFrom'
     o 'SelectFrom WhereClause', -> "#{$1} #{$2}"
+    o 'SelectFrom OrderClause', -> "#{$1} #{$2}"
+    o 'SelectFrom WhereClause OrderClause', -> "#{$1} #{$2} #{$3}"
   ]
   
   SelectFrom: [
@@ -32,6 +34,10 @@ grammar =
   
   WhereClause: [
     o 'WHERE Conditions', -> "WHERE #{$2}"
+  ]
+  
+  OrderClause: [
+    o 'ORDER BY Value DIRECTION', -> "ORDER BY #{$3} #{$4}"
   ]
   
   Conditions: [

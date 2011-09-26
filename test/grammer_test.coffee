@@ -12,3 +12,4 @@ parser.lexer =
     
 console.log parser.parse(lexer.tokenize("SELECT * FROM my_table"))
 console.log parser.parse(lexer.tokenize("SELECT COUNT(foo), bar AS x, y FROM my_table WHERE a = 5 and b > a"))
+console.log parser.parse(lexer.tokenize("SELECT * FROM my_table ORDER BY age DESC"))
