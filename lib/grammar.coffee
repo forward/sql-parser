@@ -8,7 +8,7 @@ o = (patternString, action, options) ->
   patternString = patternString.replace /\s{2,}/g, ' '
   return [patternString, '$$ = $1;', options] unless action
   action = if match = unwrap.exec action then match[1] else "(#{action}())"
-  # action = action.replace /\bnew /g, '$&yy.'
+  action = action.replace /\bnew /g, '$&yy.'
   [patternString, "$$ = #{action};", options]
 
 grammar = 
@@ -23,64 +23,70 @@ grammar =
   
   SelectQuery: [
     o 'SelectFrom'
-    o 'SelectFrom OrderClause', -> "#{$1} #{$2}"
-    o 'SelectFrom GroupClause', -> "#{$1} #{$2}"
-    o 'SelectFrom WhereClause GroupClause', -> "#{$1} #{$2} #{$3}"
-    o 'SelectFrom WhereClause GroupClause OrderClause', -> "#{$1} #{$2} #{$3} #{$4}"
-    o 'SelectFrom WhereClause', -> "#{$1} #{$2}"
-    o 'SelectFrom WhereClause OrderClause', -> "#{$1} #{$2} #{$3}"
+    o 'SelectFrom OrderClause',                           -> $1.order = $2; $1
+    o 'SelectFrom GroupClause',                           -> $1.group = $2; $1
+    o 'SelectFrom WhereClause',                           -> $1.where = $2; $1
+    o 'SelectFrom WhereClause OrderClause',               -> "#{$1} #{$2} #{$3}"
+    o 'SelectFrom WhereClause GroupClause',               -> "#{$1} #{$2} #{$3}"
+    o 'SelectFrom WhereClause GroupClause OrderClause',   -> "#{$1} #{$2} #{$3} #{$4}"
   ]
   
   SelectFrom: [
-    o 'SELECT Fields FROM LITERAL', -> "#{$1} #{$2} #{$3} #{$4}"
+    o 'SELECT Fields FROM Literal',                       -> new Select($2, $4)
   ]
   
   WhereClause: [
-    o 'WHERE Conditions', -> "WHERE #{$2}"
+    o 'WHERE Conditions',                                 -> new Where($2)
   ]
   
+  # TODO: order by can take mulitple sorts and also the direction is optional
   OrderClause: [
-    o 'ORDER BY Value DIRECTION', -> "ORDER BY #{$3} #{$4}"
+    o 'ORDER BY Value DIRECTION',                         -> new Order($3, $4)
   ]
   
   GroupClause: [
-    o 'GROUP BY ArgumentList', -> "GROUP BY #{$3}"
+    o 'GROUP BY ArgumentList',                            -> new Group($3)
   ]
   
+  # TODO: Support nested conditionals, eg: a and (b or c)
   Conditions: [
-    o 'Condition'
-    o 'Condition CONDITIONAL Condition', -> "#{$1} #{$2} #{$3}"
+    o 'Condition',                                        -> [$1]
+    o 'Conditions CONDITIONAL Condition',                 -> [$1, $2, $3]
   ]
   
   Condition: [
-    o 'Value OPERATOR Value', -> "#{$1} #{$2} #{$3}"
+    o 'Value OPERATOR Value',                             -> new Condition($2, $1, $3)
   ]
   
   Value: [
-    o 'LITERAL'
-    o 'NUMBER'
-    o 'STRING'
+    o 'Literal'
+    o 'NUMBER',                                           -> new NumberValue($1)
+    o 'STRING',                                           -> new StringValue($1)
     o 'Function'
   ]
   
+  Literal: [
+    o 'LITERAL',                                          -> new LiteralValue($1)
+  ]
+  
   Function: [
-    o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN", -> "#{$1}(#{$3})"
+    o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN",     -> "#{$1}(#{$3})"
   ]
   
   ArgumentList: [
-    o 'Value'
-    o 'Value SEPARATOR ArgumentList', -> "#{$1}, #{$3}"
+    o 'Value',                                            -> [$1]
+    o 'ArgumentList SEPARATOR Value',                     -> $1.concat($3)
   ]
   
   Fields: [
-    o 'Field'
-    o 'Field SEPARATOR Fields', -> "#{$1}, #{$3}"
+    o 'Field',                                            -> [$1]
+    o 'Fields SEPARATOR Field',                           -> $1.concat($3)
   ]
   
   Field: [
     o 'STAR'
-    o 'Value'
-    o 'Value AS LITERAL', -> "#{$1} AS #{$3}"
+    o 'Value',                                            -> new Field($1)
+    o 'Value AS LITERAL',                                 -> new Field($1, $3)
   ]
 
 
@@ -106,10 +112,11 @@ buildParser = ->
     lex: ->
       [tag, @yytext, @yylineno] = @tokens[@pos++] or ['']
       tag
-    setInput: (@tokens) ->
-      @pos = 0
-    upcomingInput: ->
-      ""
+    setInput: (@tokens) -> @pos = 0
+    upcomingInput: -> ""
+    
+  parser.yy = require('./nodes')
+  
   return parser
   
 exports.parser = buildParser()

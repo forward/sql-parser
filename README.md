@@ -1,7 +1,7 @@
 SQL Parser
 ==========
 
-SQL Parser is a lexer, grammar and parser for SQL written in JS. Currently it is only capable of parsing faily basic SELECT queries but full SQL support will hopefully come in time. See the specs for examples of currently supported queries.
+SQL Parser is a lexer, grammar and parser for SQL written in JS. Currently it is only capable of parsing fairly basic SELECT queries but full SQL support will hopefully come in time. See the specs for examples of currently supported queries.
 
 Lexer
 -----
@@ -13,7 +13,7 @@ The lexer takes a SQL query string as input and returns a stream of tokens in th
 Here is a simple example...
 
     lexer.tokenize('select * from my_table')
-    
+
     [
       ['SELECT','select',1], 
       ['STAR','*',1], 
@@ -28,3 +28,12 @@ Parser
 ------
 
 The parser is currently very silly and just reproduces the input stream, more coming soon.
+
+    tokens = lexer.tokenize('select * from my_table where foo = 'bar')
+    parser.parse(tokens).toString()
+
+    SELECT *
+      FROM `my_table`
+      WHERE `foo` = 'bar'
+    
+    
