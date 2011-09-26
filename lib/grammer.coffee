@@ -23,8 +23,11 @@ grammar =
   
   SelectQuery: [
     o 'SelectFrom'
-    o 'SelectFrom WhereClause', -> "#{$1} #{$2}"
     o 'SelectFrom OrderClause', -> "#{$1} #{$2}"
+    o 'SelectFrom GroupClause', -> "#{$1} #{$2}"
+    o 'SelectFrom WhereClause GroupClause', -> "#{$1} #{$2} #{$3}"
+    o 'SelectFrom WhereClause GroupClause OrderClause', -> "#{$1} #{$2} #{$3} #{$4}"
+    o 'SelectFrom WhereClause', -> "#{$1} #{$2}"
     o 'SelectFrom WhereClause OrderClause', -> "#{$1} #{$2} #{$3}"
   ]
   
@@ -38,6 +41,10 @@ grammar =
   
   OrderClause: [
     o 'ORDER BY Value DIRECTION', -> "ORDER BY #{$3} #{$4}"
+  ]
+  
+  GroupClause: [
+    o 'GROUP BY ArgumentList', -> "GROUP BY #{$3}"
   ]
   
   Conditions: [
@@ -77,18 +84,32 @@ grammar =
   ]
 
 
-tokens = []
-operators = []
 
-for name, alternatives of grammar
-  grammar[name] = for alt in alternatives
-    for token in alt[0].split ' '
-      tokens.push token unless grammar[token]
-    alt[1] = "return #{alt[1]}" if name is 'Root'
-    alt
+buildParser = ->
+  tokens = []
+  operators = []
 
-exports.parser = new Parser
-  tokens      : tokens.join ' '
-  bnf         : grammar
-  operators   : operators.reverse()
-  startSymbol : 'Root'
+  for name, alternatives of grammar
+    grammar[name] = for alt in alternatives
+      for token in alt[0].split ' '
+        tokens.push token unless grammar[token]
+      alt[1] = "return #{alt[1]}" if name is 'Root'
+      alt
+  
+  parser = new Parser
+    tokens      : tokens.join ' '
+    bnf         : grammar
+    operators   : operators.reverse()
+    startSymbol : 'Root'
+
+  parser.lexer =
+    lex: ->
+      [tag, @yytext, @yylineno] = @tokens[@pos++] or ['']
+      tag
+    setInput: (@tokens) ->
+      @pos = 0
+    upcomingInput: ->
+      ""
+  return parser
+  
+exports.parser = buildParser()
