@@ -31,33 +31,46 @@ class Lexer
     @token(name, partMatch) if output
     return match[lengthPart].length
     
+  tokenizeFromWord: (name, word=name) ->
+    matcher = if (/^\w+$/).test(word)
+      new RegExp("^(#{word})\\b",'ig')
+    else
+      new RegExp("^(#{word}) ",'ig')
+    match = matcher.exec(@chunk)
+    return 0 unless match
+    @token(name, match[1])
+    return match[1].length
   
   tokenizeFromList: (name, list) ->
     ret = 0
     for entry in list
-      # TODO fix \\Z to work with end of line matches
-      matcher = new RegExp("^(#{entry})[ \\Z]",'ig')
-      match = matcher.exec(@chunk)
-      if match
-        @token(name, entry)
-        ret = entry.length
-        break
+      ret = @tokenizeFromWord(name, entry)
+      break if ret > 0
     ret
   
-  keywordToken:     -> @tokenizeFromList('KEYWORD', SQL_KEYWORDS)
+  keywordToken: ->
+    @tokenizeFromWord('SELECT') or
+    @tokenizeFromWord('FROM') or
+    @tokenizeFromWord('WHERE') or
+    @tokenizeFromWord('GROUP') or
+    @tokenizeFromWord('ORDER') or
+    @tokenizeFromWord('BY') or
+    @tokenizeFromWord('HAVING') or
+    @tokenizeFromWord('AS')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
   functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
   sortOrderToken:   -> @tokenizeFromList('ORDER', SQL_SORT_ORDERS)
   
   starToken:        -> @tokenizeFromRegex('STAR', STAR)
-  seperatorToken:   -> @tokenizeFromRegex('SEPERATOR', SEPERATOR)
+  seperatorToken:   -> @tokenizeFromRegex('SEPARATOR', SEPARATOR)
   # whitespaceToken:  -> @tokenizeFromRegex('WHITESPACE', WHITESPACE, 0, 0, @preserveWhitespace)
   literalToken:     -> @tokenizeFromRegex('LITERAL', LITERAL, 1, 0)
   numberToken:      -> @tokenizeFromRegex('NUMBER', NUMBER)
   stringToken:      -> @tokenizeFromRegex('STRING', STRING, 1, 0)
   parensToken:      -> 
-    @tokenizeFromRegex('LEFT_PAREN', /^\(/,) or @tokenizeFromRegex('RIGHT_PAREN', /^\)/,)
+    @tokenizeFromRegex('LEFT_PAREN', /^\(/,) or 
+    @tokenizeFromRegex('RIGHT_PAREN', /^\)/,)
   
   whitespaceToken: ->
     return 0 unless match = WHITESPACE.exec(@chunk)
@@ -74,7 +87,7 @@ class Lexer
   SQL_OPERATORS       = ['=', '>', '<']
   SQL_CONDITIONALS    = ['AND']
   STAR                = /^\*/
-  SEPERATOR           = /^,/
+  SEPARATOR           = /^,/
   WHITESPACE          = /^[ \n\r]+/
   LITERAL             = /^`?([a-z_][a-z0-9_]{0,})`?/i
   NUMBER              = /^[0-9]+/
