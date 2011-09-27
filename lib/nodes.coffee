@@ -26,8 +26,12 @@ exports.NumberValue = class LiteralValue
   toString: -> @value.toString()
 
 exports.Order = class Order
+  constructor: (@orderings) ->
+  toString: -> "ORDER BY #{@orderings.join(', ')}"
+
+exports.OrderArgument = class OrderArgument
   constructor: (@value, @direction='ASC') -> null
-  toString: -> "ORDER BY #{@value} #{@direction}"
+  toString: -> "#{@value} #{@direction}"
 
 exports.Limit = class Limit
   constructor: (@value) -> null

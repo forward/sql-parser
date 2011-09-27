@@ -65,7 +65,6 @@ class Lexer
   
   starToken:        -> @tokenizeFromRegex('STAR', STAR)
   seperatorToken:   -> @tokenizeFromRegex('SEPARATOR', SEPARATOR)
-  # whitespaceToken:  -> @tokenizeFromRegex('WHITESPACE', WHITESPACE, 0, 0, @preserveWhitespace)
   literalToken:     -> @tokenizeFromRegex('LITERAL', LITERAL, 1, 0)
   numberToken:      -> @tokenizeFromRegex('NUMBER', NUMBER)
   stringToken:      -> @tokenizeFromRegex('STRING', STRING, 1, 0)

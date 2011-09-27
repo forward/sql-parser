@@ -44,12 +44,21 @@ grammar =
   ]
   
   LimitClause: [
-    o 'LIMIT Number',                                 -> new Limit($2)
+    o 'LIMIT Number',                                     -> new Limit($2)
   ]
   
-  # TODO: order by can take mulitple sorts and also the direction is optional
   OrderClause: [
-    o 'ORDER BY Value DIRECTION',                         -> new Order($3, $4)
+    o 'ORDER BY OrderArgs',                               -> new Order($3)
+  ]
+  
+  OrderArgs: [
+    o 'OrderArg',                                         -> [$1]
+    o 'OrderArgs SEPARATOR OrderArg',                     -> $1.concat($3)
+  ]
+  
+  OrderArg: [
+    o 'Value',                                            -> new OrderArgument($1, 'ASC')
+    o 'Value DIRECTION',                                  -> new OrderArgument($1, $2)    
   ]
   
   GroupClause: [

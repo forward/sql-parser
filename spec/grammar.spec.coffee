@@ -35,6 +35,22 @@ describe "SQL Grammer", ->
       """
 
     it "parses WHERE with ORDER BY clauses", ->
+      expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY y").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE `x` > 1
+        ORDER BY `y` ASC
+      """
+
+    it "parses WHERE with multiple ORDER BY clauses", ->
+      expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY x, y DESC").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE `x` > 1
+        ORDER BY `x` ASC, `y` DESC
+      """
+
+    it "parses WHERE with ORDER BY clauses with direction", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY y ASC").toString()).toEqual """
       SELECT *
         FROM `my_table`
