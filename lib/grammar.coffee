@@ -15,19 +15,24 @@ grammar =
   ]
   
   Query: [
+    o "SelectWithLimitQuery"
     o "SelectQuery"
   ]
   
   SelectQuery: [
     o 'Select'
-    o 'Select OrderClause',                           -> $1.order = $2; $1
-    o 'Select GroupClause',                           -> $1.group = $2; $1
-    o 'Select GroupClause OrderClause',               -> $1.group = $2; $1.order = $3; $1
+    o 'Select OrderClause',                               -> $1.order = $2; $1
+    o 'Select GroupClause',                               -> $1.group = $2; $1
+    o 'Select GroupClause OrderClause',                   -> $1.group = $2; $1.order = $3; $1
+  ]
+  
+  SelectWithLimitQuery: [
+    o 'SelectQuery LimitClause',                          -> $1.limit = $2; $1
   ]
   
   Select: [
     o 'SelectClause'
-    o 'SelectClause WhereClause',                     -> $1.where = $2; $1
+    o 'SelectClause WhereClause',                         -> $1.where = $2; $1
   ]
   
   SelectClause: [
@@ -36,6 +41,10 @@ grammar =
   
   WhereClause: [
     o 'WHERE Conditions',                                 -> new Where($2)
+  ]
+  
+  LimitClause: [
+    o 'LIMIT Number',                                 -> new Limit($2)
   ]
   
   # TODO: order by can take mulitple sorts and also the direction is optional
@@ -68,9 +77,17 @@ grammar =
   
   Value: [
     o 'Literal'
-    o 'NUMBER',                                           -> new NumberValue($1)
-    o 'STRING',                                           -> new StringValue($1)
+    o 'Number'
+    o 'String'
     o 'Function'
+  ]
+  
+  Number: [
+    o 'NUMBER',                                           -> new NumberValue($1)
+  ]
+  
+  String: [
+    o 'STRING',                                           -> new StringValue($1)
   ]
   
   Literal: [

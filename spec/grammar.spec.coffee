@@ -20,6 +20,13 @@ describe "SQL Grammer", ->
         GROUP BY `x`, `y`
       """
     
+    it "parses LIMIT clauses", ->
+      expect(parse("SELECT * FROM my_table LIMIT 10").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        LIMIT 10
+      """
+    
     it "parses WHERE clauses", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 AND y = 'foo'").toString()).toEqual """
       SELECT *

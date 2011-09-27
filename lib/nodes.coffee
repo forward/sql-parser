@@ -3,12 +3,14 @@ exports.Select = class Select
       @order = null
       @group = null
       @where = null
+      @limit = null
     toString: ->
       ret = ["SELECT #{@fields.join(', ')}"] 
       ret.push "FROM #{@source}"
       ret.push @where.toString() if @where
       ret.push @group.toString() if @group
       ret.push @order.toString() if @order
+      ret.push @limit.toString() if @limit
       ret.join("\n  ")
 
 exports.LiteralValue = class LiteralValue
@@ -26,6 +28,10 @@ exports.NumberValue = class LiteralValue
 exports.Order = class Order
   constructor: (@value, @direction='ASC') -> null
   toString: -> "ORDER BY #{@value} #{@direction}"
+
+exports.Limit = class Limit
+  constructor: (@value) -> null
+  toString: -> "LIMIT #{@value}"
 
 exports.Group = class Group
   constructor: (@values) ->

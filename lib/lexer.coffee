@@ -56,6 +56,7 @@ class Lexer
     @tokenizeFromWord('ORDER') or
     @tokenizeFromWord('BY') or
     @tokenizeFromWord('HAVING') or
+    @tokenizeFromWord('LIMIT') or
     @tokenizeFromWord('AS')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
