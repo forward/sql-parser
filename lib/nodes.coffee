@@ -50,15 +50,15 @@ exports.Group = class Group
 
 exports.Where = class Where
   constructor: (@conditions) -> null
-  toString: -> "WHERE #{@conditions.join(' ')}"
+  toString: -> "WHERE #{@conditions}"
 
 exports.Having = class Having
   constructor: (@conditions) -> null
-  toString: -> "HAVING #{@conditions.join(' ')}"
+  toString: -> "HAVING #{@conditions}"
 
-exports.Condition = class Condition
-  constructor: (@comparitor, @left, @right) -> null
-  toString: -> "#{@left} #{@comparitor} #{@right}"
+exports.Op = class Op
+  constructor: (@operation, @left, @right) -> null
+  toString: -> "(#{@left} #{@operation} #{@right})"
 
 exports.Field = class Field
   constructor: (@field, @name=null) -> null

@@ -74,14 +74,19 @@ grammar =
     o 'HAVING Conditions',                                -> new Having($2)
   ]
   
-  # TODO: Support nested conditionals, eg: a and (b or c)
   Conditions: [
-    o 'Condition',                                        -> [$1]
-    o 'Conditions CONDITIONAL Condition',                 -> [$1, $2, $3]
+    o 'Condition',                                        -> $1
+    o 'LEFT_PAREN Conditions RIGHT_PAREN',                -> $2
+    o 'Conditions CONDITIONAL Conditions',                -> new Op($2, $1, $3)
   ]
   
   Condition: [
-    o 'Value OPERATOR Value',                             -> new Condition($2, $1, $3)
+    o 'Expression'
+    o 'Expression OPERATOR Expression',                   -> new Op($2, $1, $3)
+  ]
+  
+  Expression: [
+    o 'Value OPERATOR Value',                             -> new Op($2, $1, $3)
   ]
   
   Value: [
@@ -124,7 +129,9 @@ grammar =
   ]
 
 tokens = []
-operators = []
+operators = [
+  ['left', 'CONDITIONAL']
+]
 
 for name, alternatives of grammar
   grammar[name] = for alt in alternatives

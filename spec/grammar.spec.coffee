@@ -31,14 +31,21 @@ describe "SQL Grammer", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 AND y = 'foo'").toString()).toEqual """
       SELECT *
         FROM `my_table`
-        WHERE `x` > 1 AND `y` = 'foo'
+        WHERE ((`x` > 1) AND (`y` = 'foo'))
+      """
+    
+    it "parses complex WHERE clauses", ->
+      expect(parse("SELECT * FROM my_table WHERE a > 10 AND (a < 30 OR b = 'c')").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE ((`a` > 10) AND ((`a` < 30) OR (`b` = 'c')))
       """
 
     it "parses WHERE with ORDER BY clauses", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY y").toString()).toEqual """
       SELECT *
         FROM `my_table`
-        WHERE `x` > 1
+        WHERE (`x` > 1)
         ORDER BY `y` ASC
       """
 
@@ -46,7 +53,7 @@ describe "SQL Grammer", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY x, y DESC").toString()).toEqual """
       SELECT *
         FROM `my_table`
-        WHERE `x` > 1
+        WHERE (`x` > 1)
         ORDER BY `x` ASC, `y` DESC
       """
 
@@ -54,7 +61,7 @@ describe "SQL Grammer", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY y ASC").toString()).toEqual """
       SELECT *
         FROM `my_table`
-        WHERE `x` > 1
+        WHERE (`x` > 1)
         ORDER BY `y` ASC
       """
 
@@ -62,7 +69,7 @@ describe "SQL Grammer", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 GROUP BY x, y").toString()).toEqual """
       SELECT *
         FROM `my_table`
-        WHERE `x` > 1
+        WHERE (`x` > 1)
         GROUP BY `x`, `y`
       """
 
@@ -70,7 +77,7 @@ describe "SQL Grammer", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 GROUP BY x, y ORDER BY COUNT(y) ASC").toString()).toEqual """
       SELECT *
         FROM `my_table`
-        WHERE `x` > 1
+        WHERE (`x` > 1)
         GROUP BY `x`, `y`
         ORDER BY COUNT(`y`) ASC
       """
@@ -80,5 +87,5 @@ describe "SQL Grammer", ->
       SELECT *
         FROM `my_table`
         GROUP BY `x`, `y`
-        HAVING COUNT(`y`) > 1
+        HAVING (COUNT(`y`) > 1)
       """
