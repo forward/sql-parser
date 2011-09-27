@@ -23,9 +23,9 @@ grammar =
     o 'SelectFrom OrderClause',                           -> $1.order = $2; $1
     o 'SelectFrom GroupClause',                           -> $1.group = $2; $1
     o 'SelectFrom WhereClause',                           -> $1.where = $2; $1
-    o 'SelectFrom WhereClause OrderClause',               -> "#{$1} #{$2} #{$3}"
-    o 'SelectFrom WhereClause GroupClause',               -> "#{$1} #{$2} #{$3}"
-    o 'SelectFrom WhereClause GroupClause OrderClause',   -> "#{$1} #{$2} #{$3} #{$4}"
+    o 'SelectFrom WhereClause OrderClause',               -> $1.where = $2; $1.order = $3; $1
+    o 'SelectFrom WhereClause GroupClause',               -> $1.where = $2; $1.group = $3; $1
+    o 'SelectFrom WhereClause GroupClause OrderClause',   -> $1.where = $2; $1.group = $3; $1.order = $4; $1
   ]
   
   SelectFrom: [

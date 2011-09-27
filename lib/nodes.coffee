@@ -6,8 +6,8 @@ exports.Select = class Select
       ret = ["SELECT #{@fields.join(', ')}"] 
       ret.push "FROM #{@source}"
       ret.push @where.toString() if @where
-      ret.push @order.toString() if @order
       ret.push @group.toString() if @group
+      ret.push @order.toString() if @order
       ret.join("\n  ")
 
 exports.LiteralValue = class LiteralValue

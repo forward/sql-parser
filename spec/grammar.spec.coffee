@@ -26,3 +26,28 @@ describe "SQL Grammer", ->
         FROM `my_table`
         WHERE `x` > 1 AND `y` = 'foo'
       """
+
+    it "parses WHERE with ORDER BY clauses", ->
+      expect(parse("SELECT * FROM my_table WHERE x > 1 ORDER BY y ASC").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE `x` > 1
+        ORDER BY `y` ASC
+      """
+
+    it "parses WHERE with GROUP BY clauses", ->
+      expect(parse("SELECT * FROM my_table WHERE x > 1 GROUP BY x, y").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE `x` > 1
+        GROUP BY `x`, `y`
+      """
+
+    it "parses WHERE with GROUP BY and ORDER BY clauses", ->
+      expect(parse("SELECT * FROM my_table WHERE x > 1 GROUP BY x, y ORDER BY COUNT(y) ASC").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE `x` > 1
+        GROUP BY `x`, `y`
+        ORDER BY COUNT(`y`) ASC
+      """
