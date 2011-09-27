@@ -1,3 +1,6 @@
+indent = (str) ->
+  ("  #{line}" for line in str.split("\n")).join("\n")
+
 exports.Select = class Select
     constructor: (@fields, @source) -> 
       @order = null
@@ -6,12 +9,12 @@ exports.Select = class Select
       @limit = null
     toString: ->
       ret = ["SELECT #{@fields.join(', ')}"] 
-      ret.push "FROM #{@source}"
-      ret.push @where.toString() if @where
-      ret.push @group.toString() if @group
-      ret.push @order.toString() if @order
-      ret.push @limit.toString() if @limit
-      ret.join("\n  ")
+      ret.push indent("FROM #{@source}")
+      ret.push indent(@where.toString()) if @where
+      ret.push indent(@group.toString()) if @group
+      ret.push indent(@order.toString()) if @order
+      ret.push indent(@limit.toString()) if @limit
+      ret.join("\n")
 
 exports.LiteralValue = class LiteralValue
   constructor: (@value) -> null
@@ -43,7 +46,7 @@ exports.Group = class Group
   toString: -> 
     ret = ["GROUP BY #{@values.join(', ')}"]
     ret.push @having.toString() if @having
-    ret.join("\n  ")
+    ret.join("\n")
 
 exports.Where = class Where
   constructor: (@conditions) -> null
