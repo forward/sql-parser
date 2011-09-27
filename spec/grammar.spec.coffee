@@ -1,5 +1,5 @@
 lexer = require('../lib/lexer')
-parser = require("../lib/grammar").parser
+parser = require("../lib/parser")
 
 parse = (query) -> parser.parse(lexer.tokenize(query))
 
@@ -26,8 +26,3 @@ describe "SQL Grammer", ->
         FROM `my_table`
         WHERE `x` > 1 AND `y` = 'foo'
       """
-
-
-# console.log parser.parse(lexer.tokenize("SELECT COUNT(foo), bar AS x, y FROM my_table WHERE a = 5 and b > a"))
-# console.log parser.parse(lexer.tokenize("SELECT * FROM my_table ORDER BY age DESC"))
-# console.log parser.parse(lexer.tokenize("SELECT * FROM my_table GROUP BY first, last"))

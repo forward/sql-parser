@@ -1,7 +1,4 @@
 
-{Parser} = require 'jison'
-
-
 unwrap = /^function\s*\(\)\s*\{\s*return\s*([\s\S]*);\s*\}/
 
 o = (patternString, action, options) ->
@@ -89,34 +86,16 @@ grammar =
     o 'Value AS LITERAL',                                 -> new Field($1, $3)
   ]
 
+tokens = []
+operators = []
 
+for name, alternatives of grammar
+  grammar[name] = for alt in alternatives
+    for token in alt[0].split ' '
+      tokens.push token unless grammar[token]
+    alt[1] = "return #{alt[1]}" if name is 'Root'
+    alt
 
-buildParser = ->
-  tokens = []
-  operators = []
-
-  for name, alternatives of grammar
-    grammar[name] = for alt in alternatives
-      for token in alt[0].split ' '
-        tokens.push token unless grammar[token]
-      alt[1] = "return #{alt[1]}" if name is 'Root'
-      alt
-  
-  parser = new Parser
-    tokens      : tokens.join ' '
-    bnf         : grammar
-    operators   : operators.reverse()
-    startSymbol : 'Root'
-
-  parser.lexer =
-    lex: ->
-      [tag, @yytext, @yylineno] = @tokens[@pos++] or ['']
-      tag
-    setInput: (@tokens) -> @pos = 0
-    upcomingInput: -> ""
-    
-  parser.yy = require('./nodes')
-  
-  return parser
-  
-exports.parser = buildParser()
+exports.grammar = grammar
+exports.tokens = tokens
+exports.operators = operators.reverse()
