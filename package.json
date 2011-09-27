@@ -1,0 +1,22 @@
+{
+  "name": "sql-parser",
+  "description": "Lexer and Parser for SQL Syntax",
+  "version": "0.0.1",
+  "author": {
+    "name": "Andy Kent",
+    "email": "andy@forward.co.uk"
+  },
+  "directories": { 
+    "lib" : "./lib"
+  },
+  "dependencies": {
+    "coffee-script": "1.0.1"
+  },
+  "engines": [ 
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/forward/sql-parser.git"
+  }
+}
