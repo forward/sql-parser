@@ -85,7 +85,7 @@ class Lexer
   SQL_FUNCTIONS       = ['COUNT', 'MIN', 'MAX']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
   SQL_OPERATORS       = ['=', '>', '<']
-  SQL_CONDITIONALS    = ['AND']
+  SQL_CONDITIONALS    = ['AND', 'OR']
   STAR                = /^\*/
   SEPARATOR           = /^,/
   WHITESPACE          = /^[ \n\r]+/
