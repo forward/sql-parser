@@ -19,16 +19,18 @@ grammar =
   ]
   
   SelectQuery: [
-    o 'SelectFrom'
-    o 'SelectFrom OrderClause',                           -> $1.order = $2; $1
-    o 'SelectFrom GroupClause',                           -> $1.group = $2; $1
-    o 'SelectFrom WhereClause',                           -> $1.where = $2; $1
-    o 'SelectFrom WhereClause OrderClause',               -> $1.where = $2; $1.order = $3; $1
-    o 'SelectFrom WhereClause GroupClause',               -> $1.where = $2; $1.group = $3; $1
-    o 'SelectFrom WhereClause GroupClause OrderClause',   -> $1.where = $2; $1.group = $3; $1.order = $4; $1
+    o 'Select'
+    o 'Select OrderClause',                           -> $1.order = $2; $1
+    o 'Select GroupClause',                           -> $1.group = $2; $1
+    o 'Select GroupClause OrderClause',               -> $1.group = $2; $1.order = $3; $1
   ]
   
-  SelectFrom: [
+  Select: [
+    o 'SelectClause'
+    o 'SelectClause WhereClause',                     -> $1.where = $2; $1
+  ]
+  
+  SelectClause: [
     o 'SELECT Fields FROM Literal',                       -> new Select($2, $4)
   ]
   
@@ -42,7 +44,16 @@ grammar =
   ]
   
   GroupClause: [
+    o 'GroupBasicClause'
+    o 'GroupBasicClause HavingClause',                    -> $1.having = $2; $1
+  ]
+  
+  GroupBasicClause: [
     o 'GROUP BY ArgumentList',                            -> new Group($3)
+  ]
+  
+  HavingClause: [
+    o 'HAVING Conditions',                                -> new Having($2)
   ]
   
   # TODO: Support nested conditionals, eg: a and (b or c)

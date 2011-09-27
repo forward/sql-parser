@@ -51,3 +51,11 @@ describe "SQL Grammer", ->
         GROUP BY `x`, `y`
         ORDER BY COUNT(`y`) ASC
       """
+
+    it "parses GROUP BY and HAVING clauses", ->
+      expect(parse("SELECT * FROM my_table GROUP BY x, y HAVING COUNT(`y`) > 1").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        GROUP BY `x`, `y`
+        HAVING COUNT(`y`) > 1
+      """

@@ -2,6 +2,7 @@ exports.Select = class Select
     constructor: (@fields, @source) -> 
       @order = null
       @group = null
+      @where = null
     toString: ->
       ret = ["SELECT #{@fields.join(', ')}"] 
       ret.push "FROM #{@source}"
@@ -27,12 +28,20 @@ exports.Order = class Order
   toString: -> "ORDER BY #{@value} #{@direction}"
 
 exports.Group = class Group
-  constructor: (@values) -> null
-  toString: -> "GROUP BY #{@values.join(', ')}"
+  constructor: (@values) ->
+    @having = null
+  toString: -> 
+    ret = ["GROUP BY #{@values.join(', ')}"]
+    ret.push @having.toString() if @having
+    ret.join("\n  ")
 
 exports.Where = class Where
   constructor: (@conditions) -> null
   toString: -> "WHERE #{@conditions.join(' ')}"
+
+exports.Having = class Having
+  constructor: (@conditions) -> null
+  toString: -> "HAVING #{@conditions.join(' ')}"
 
 exports.Condition = class Condition
   constructor: (@comparitor, @left, @right) -> null
