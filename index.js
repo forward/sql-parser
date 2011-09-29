@@ -1,5 +1,7 @@
 require('coffee-script')
+sql = require('./lib/sql_parser')
 
-exports.lexer   = require('./lib/lexer')
-exports.parser  = require('./lib/parser')
-exports.nodes   = require('./lib/nodes')
+for(var key in sql) {
+  exports[key] = sql[key]
+}
+

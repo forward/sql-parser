@@ -41,10 +41,10 @@ exports.Limit = class Limit
   toString: -> "LIMIT #{@value}"
 
 exports.Group = class Group
-  constructor: (@values) ->
+  constructor: (@fields) ->
     @having = null
   toString: -> 
-    ret = ["GROUP BY #{@values.join(', ')}"]
+    ret = ["GROUP BY #{@fields.join(', ')}"]
     ret.push @having.toString() if @having
     ret.join("\n")
 
@@ -63,4 +63,9 @@ exports.Op = class Op
 exports.Field = class Field
   constructor: (@field, @name=null) -> null
   toString: -> if @name then "#{@field} AS #{@name}" else @field
+
+exports.Star = class Star
+  constructor: () -> null
+  toString: -> '*'
+  star: true
       

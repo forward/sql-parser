@@ -24,12 +24,12 @@ describe "SQL Lexer", ->
 # 
 # console.log(tokens)
 # 
-# tokens = lexer.tokenize """
-#   SELECT x AS `first_name`, min(age) 
-#   FROM my_stream
-#   WHERE age > 10 AND (age < 30 OR first_name = 'andy')
-#   GROUP BY age, name 
-#   ORDER BY age DESC 
-#   HAVING COUNT(*) > 5"""
-# 
-# console.log(tokens)
+tokens = lexer.tokenize """
+  SELECT x AS `first_name`, min(age) 
+  FROM my_stream
+  WHERE age > 10.2 AND (age < 30 OR first_name = 'andy')
+  GROUP BY age, name 
+  ORDER BY age DESC 
+  HAVING COUNT(*) > 5"""
+
+console.log(tokens)

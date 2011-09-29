@@ -123,7 +123,7 @@ grammar =
   ]
   
   Field: [
-    o 'STAR'
+    o 'STAR',                                             -> new Star()
     o 'Value',                                            -> new Field($1)
     o 'Value AS LITERAL',                                 -> new Field($1, $3)
   ]

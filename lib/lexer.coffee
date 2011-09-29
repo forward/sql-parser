@@ -90,7 +90,7 @@ class Lexer
   SEPARATOR           = /^,/
   WHITESPACE          = /^[ \n\r]+/
   LITERAL             = /^`?([a-z_][a-z0-9_]{0,})`?/i
-  NUMBER              = /^[0-9]+/
+  NUMBER              = /^[0-9]+(\.[0-9]+)?/
   STRING              = /^'(.*?)'/
   
   
