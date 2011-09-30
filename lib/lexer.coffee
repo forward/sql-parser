@@ -85,7 +85,7 @@ class Lexer
   SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS']
   SQL_FUNCTIONS       = ['COUNT', 'MIN', 'MAX']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
-  SQL_OPERATORS       = ['=', '>', '<']
+  SQL_OPERATORS       = ['=', '>', '<', 'LIKE']
   SQL_CONDITIONALS    = ['AND', 'OR']
   STAR                = /^\*/
   SEPARATOR           = /^,/
