@@ -27,6 +27,13 @@ describe "SQL Grammer", ->
         LIMIT 10
       """
     
+    it "parses SELECTs with FUNCTIONs", ->
+      expect(parse("SELECT a, COUNT(1, b) FROM my_table LIMIT 10").toString()).toEqual """
+      SELECT `a`, COUNT(1, `b`)
+        FROM `my_table`
+        LIMIT 10
+      """
+    
     it "parses WHERE clauses", ->
       expect(parse("SELECT * FROM my_table WHERE x > 1 AND y = 'foo'").toString()).toEqual """
       SELECT *

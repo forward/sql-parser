@@ -28,6 +28,10 @@ exports.NumberValue = class LiteralValue
   constructor: (value) -> @value = Number(value)
   toString: -> @value.toString()
 
+exports.FunctionValue = class FunctionValue
+  constructor: (@name, @arguments=[]) -> null
+  toString: -> "#{@name}(#{@arguments.join(', ')})"
+
 exports.Order = class Order
   constructor: (@orderings) ->
   toString: -> "ORDER BY #{@orderings.join(', ')}"
@@ -62,7 +66,7 @@ exports.Op = class Op
 
 exports.Field = class Field
   constructor: (@field, @name=null) -> null
-  toString: -> if @name then "#{@field} AS #{@name}" else @field
+  toString: -> if @name then "#{@field} AS #{@name}" else @field.toString()
 
 exports.Star = class Star
   constructor: () -> null

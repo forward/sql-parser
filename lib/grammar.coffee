@@ -109,7 +109,7 @@ grammar =
   ]
   
   Function: [
-    o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN",     -> "#{$1}(#{$3})"
+    o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
   ]
   
   ArgumentList: [
