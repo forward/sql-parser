@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "coffee-script": "1.0.1",
-    'jison': '0.2.11'
+    "jison": "0.2.11"
   },
   "engines": [ 
     "node"
