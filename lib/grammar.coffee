@@ -95,6 +95,7 @@ grammar =
     o 'Number'
     o 'String'
     o 'Function'
+    o 'UserFunction'
   ]
   
   Number: [
@@ -111,6 +112,10 @@ grammar =
   
   Function: [
     o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
+  ]
+
+  UserFunction: [
+    o "LITERAL LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3, true)
   ]
   
   ArgumentList: [

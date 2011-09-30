@@ -29,7 +29,7 @@ exports.NumberValue = class LiteralValue
   toString: -> @value.toString()
 
 exports.FunctionValue = class FunctionValue
-  constructor: (@name, @arguments=[]) -> null
+  constructor: (@name, @arguments=[], @udf=false) -> null
   toString: -> "#{@name}(#{@arguments.join(', ')})"
 
 exports.Order = class Order

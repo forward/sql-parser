@@ -96,3 +96,9 @@ describe "SQL Grammer", ->
         GROUP BY `x`, `y`
         HAVING (COUNT(`y`) > 1)
       """
+
+    it "parses UDFs", ->
+      expect(parse("SELECT LENGTH(a) FROM my_table").toString()).toEqual """
+      SELECT LENGTH(`a`)
+        FROM `my_table`
+      """
