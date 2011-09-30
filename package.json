@@ -1,7 +1,7 @@
 {
   "name": "sql-parser",
   "description": "Lexer and Parser for SQL Syntax",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "Andy Kent",
     "email": "andy@forward.co.uk"
@@ -10,7 +10,8 @@
     "lib" : "./lib"
   },
   "dependencies": {
-    "coffee-script": "1.0.1"
+    "coffee-script": "1.0.1",
+    'jison': '0.2.11'
   },
   "engines": [ 
     "node"
