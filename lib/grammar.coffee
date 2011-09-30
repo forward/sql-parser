@@ -36,7 +36,8 @@ grammar =
   ]
   
   SelectClause: [
-    o 'SELECT Fields FROM Literal',                       -> new Select($2, $4)
+    o 'SELECT Fields FROM Literal',                       -> new Select($2, $4, false)
+    o 'SELECT DISTINCT Fields FROM Literal',              -> new Select($3, $5, true)
   ]
   
   WhereClause: [

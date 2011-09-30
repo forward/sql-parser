@@ -50,6 +50,7 @@ class Lexer
   
   keywordToken: ->
     @tokenizeFromWord('SELECT') or
+    @tokenizeFromWord('DISTINCT') or
     @tokenizeFromWord('FROM') or
     @tokenizeFromWord('WHERE') or
     @tokenizeFromWord('GROUP') or

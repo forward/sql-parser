@@ -2,7 +2,7 @@ indent = (str) ->
   ("  #{line}" for line in str.split("\n")).join("\n")
 
 exports.Select = class Select
-    constructor: (@fields, @source) -> 
+    constructor: (@fields, @source, @distinct=false) -> 
       @order = null
       @group = null
       @where = null
