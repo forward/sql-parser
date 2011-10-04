@@ -9,6 +9,7 @@ class Lexer
       bytesConsumed =  @keywordToken() or
                        @starToken() or
                        @functionToken() or
+                       @windowExtension() or
                        @sortOrderToken() or
                        @seperatorToken() or
                        @operatorToken() or
@@ -72,6 +73,13 @@ class Lexer
   parensToken:      -> 
     @tokenizeFromRegex('LEFT_PAREN', /^\(/,) or 
     @tokenizeFromRegex('RIGHT_PAREN', /^\)/,)
+  
+  windowExtension: ->
+    match = (/^\.(win):(length)/i).exec(@chunk)
+    return 0 unless match
+    @token('WINDOW', match[1])
+    @token('WINDOW_FUNCTION', match[2])
+    match[0].length
   
   whitespaceToken: ->
     return 0 unless match = WHITESPACE.exec(@chunk)

@@ -36,8 +36,14 @@ grammar =
   ]
   
   SelectClause: [
-    o 'SELECT Fields FROM Literal',                       -> new Select($2, $4, false)
-    o 'SELECT DISTINCT Fields FROM Literal',              -> new Select($3, $5, true)
+    o 'SELECT Fields FROM Table',                         -> new Select($2, $4, false)
+    o 'SELECT DISTINCT Fields FROM Table',                -> new Select($3, $5, true)
+  ]
+  
+  Table: [
+    o 'Literal',                                          -> new Table($1)
+    o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
+                                                          -> new Table($1, $2, $3, $5)
   ]
   
   WhereClause: [

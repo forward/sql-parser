@@ -102,3 +102,9 @@ describe "SQL Grammer", ->
       SELECT LENGTH(`a`)
         FROM `my_table`
       """
+
+    it "supports time window extensions", ->
+      expect(parse("SELECT * FROM my_table.win:length(123)").toString()).toEqual """
+      SELECT *
+        FROM `my_table`.win:length(123)
+      """

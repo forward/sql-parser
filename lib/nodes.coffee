@@ -44,6 +44,14 @@ exports.Limit = class Limit
   constructor: (@value) -> null
   toString: -> "LIMIT #{@value}"
 
+exports.Table = class Table
+  constructor: (@name, @win=null, @winFn=null, @winArg=null) -> null
+  toString: -> 
+    if @win
+      "#{@name}.#{@win}:#{@winFn}(#{@winArg})"
+    else
+      @name.toString()
+
 exports.Group = class Group
   constructor: (@fields) ->
     @having = null

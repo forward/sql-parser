@@ -26,10 +26,10 @@ describe "SQL Lexer", ->
 # 
 # tokens = lexer.tokenize """
 #   SELECT x AS `first_name`, min(age) 
-#   FROM my_stream
+#   FROM my_stream.win:length(123)
 #   WHERE age > 10.2 AND (age < 30 OR first_name = 'andy')
 #   GROUP BY age, name 
 #   ORDER BY age DESC 
 #   HAVING COUNT(*) > 5"""
-
-console.log(tokens)
+# 
+# console.log(tokens)
