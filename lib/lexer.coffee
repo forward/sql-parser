@@ -75,7 +75,7 @@ class Lexer
     @tokenizeFromRegex('RIGHT_PAREN', /^\)/,)
   
   windowExtension: ->
-    match = (/^\.(win):(length)/i).exec(@chunk)
+    match = (/^\.(win):(length|time)/i).exec(@chunk)
     return 0 unless match
     @token('WINDOW', match[1])
     @token('WINDOW_FUNCTION', match[2])
