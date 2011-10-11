@@ -23,6 +23,10 @@ describe "SQL Lexer", ->
 # tokens = lexer.tokenize("SELECT LENGTH(foo) FROM data")
 # 
 # console.log(tokens)
+#
+# tokens = lexer.tokenize("SELECT f+1 AS f1 FROM data")
+# 
+# console.log(tokens)
 # 
 # tokens = lexer.tokenize """
 #   SELECT x AS `first_name`, min(age) 

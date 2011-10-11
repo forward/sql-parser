@@ -28,6 +28,17 @@ exports.NumberValue = class LiteralValue
   constructor: (value) -> @value = Number(value)
   toString: -> @value.toString()
 
+exports.BooleanValue = class LiteralValue
+  constructor: (value) -> 
+    @value = switch value.toLowerCase()
+      when 'true'
+        true
+      when 'false'
+        false
+      else
+        null
+  toString: -> if @value? then @value.toString().toUpperCase() else 'NULL'
+
 exports.FunctionValue = class FunctionValue
   constructor: (@name, @arguments=[], @udf=false) -> null
   toString: -> "#{@name}(#{@arguments.join(', ')})"

@@ -8,11 +8,13 @@ class Lexer
     while @chunk = sql.slice(i)
       bytesConsumed =  @keywordToken() or
                        @starToken() or
+                       @booleanToken() or
                        @functionToken() or
                        @windowExtension() or
                        @sortOrderToken() or
                        @seperatorToken() or
                        @operatorToken() or
+                       @mathToken() or
                        @conditionalToken() or
                        @numberToken() or
                        @stringToken() or
@@ -33,10 +35,11 @@ class Lexer
     return match[lengthPart].length
     
   tokenizeFromWord: (name, word=name) ->
+    word = @regexEscape(word)
     matcher = if (/^\w+$/).test(word)
       new RegExp("^(#{word})\\b",'ig')
     else
-      new RegExp("^(#{word}) ",'ig')
+      new RegExp("^(#{word})",'ig')
     match = matcher.exec(@chunk)
     return 0 unless match
     @token(name, match[1])
@@ -61,9 +64,13 @@ class Lexer
     @tokenizeFromWord('LIMIT') or
     @tokenizeFromWord('AS')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  
+  mathToken:        -> 
+    @tokenizeFromList('MATH', MATH) or
+    @tokenizeFromList('MATH_MULTI', MATH_MULTI)
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
   functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
   sortOrderToken:   -> @tokenizeFromList('DIRECTION', SQL_SORT_ORDERS)
+  booleanToken:     -> @tokenizeFromList('BOOLEAN', BOOLEAN)
   
   starToken:        -> @tokenizeFromRegex('STAR', STAR)
   seperatorToken:   -> @tokenizeFromRegex('SEPARATOR', SEPARATOR)
@@ -89,12 +96,17 @@ class Lexer
     @token(name, partMatch) if @preserveWhitespace
     return partMatch.length
   
+  regexEscape: (str) ->
+    str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
   
   SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS']
   SQL_FUNCTIONS       = ['COUNT', 'MIN', 'MAX']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
-  SQL_OPERATORS       = ['=', '>', '<', 'LIKE']
+  SQL_OPERATORS       = ['=', '>', '<', 'LIKE', 'IS NOT', 'IS']
   SQL_CONDITIONALS    = ['AND', 'OR']
+  BOOLEAN             = ['TRUE', 'FALSE', 'NULL']
+  MATH                = ['+', '-']
+  MATH_MULTI          = ['/', '*']
   STAR                = /^\*/
   SEPARATOR           = /^,/
   WHITESPACE          = /^[ \n\r]+/

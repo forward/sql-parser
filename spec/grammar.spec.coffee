@@ -103,6 +103,33 @@ describe "SQL Grammer", ->
         FROM `my_table`
       """
 
+    it "parses expressions in place of fields", ->
+      expect(parse("SELECT f+LENGTH(f)/3 AS f1 FROM my_table").toString()).toEqual """
+      SELECT (`f` + (LENGTH(`f`) / 3)) AS `f1`
+        FROM `my_table`
+      """
+
+    it "supports booleans", ->
+      expect(parse("SELECT null FROM my_table WHERE a = true").toString()).toEqual """
+      SELECT NULL
+        FROM `my_table`
+        WHERE (`a` = TRUE)
+      """
+
+    it "supports IS and IS NOT", ->
+      expect(parse("SELECT * FROM my_table WHERE a IS NULL AND b IS NOT NULL").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE ((`a` IS NULL) AND (`b` IS NOT NULL))
+      """
+
+    it "supports nested expressions", ->
+      expect(parse("SELECT * FROM my_table WHERE MOD(LENGTH(a) + LENGTH(b), c)").toString()).toEqual """
+      SELECT *
+        FROM `my_table`
+        WHERE MOD((LENGTH(`a`) + LENGTH(`b`)), `c`)
+      """
+
     it "supports time window extensions", ->
       expect(parse("SELECT * FROM my_table.win:length(123)").toString()).toEqual """
       SELECT *

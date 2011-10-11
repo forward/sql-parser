@@ -47,7 +47,7 @@ grammar =
   ]
   
   WhereClause: [
-    o 'WHERE Conditions',                                 -> new Where($2)
+    o 'WHERE Expression',                                 -> new Where($2)
   ]
   
   LimitClause: [
@@ -78,22 +78,17 @@ grammar =
   ]
   
   HavingClause: [
-    o 'HAVING Conditions',                                -> new Having($2)
+    o 'HAVING Expression',                                -> new Having($2)
   ]
   
-  Conditions: [
-    o 'Condition',                                        -> $1
-    o 'LEFT_PAREN Conditions RIGHT_PAREN',                -> $2
-    o 'Conditions CONDITIONAL Conditions',                -> new Op($2, $1, $3)
-  ]
-  
-  Condition: [
-    o 'Expression'
-    o 'Expression OPERATOR Expression',                   -> new Op($2, $1, $3)
-  ]
   
   Expression: [
-    o 'Value OPERATOR Value',                             -> new Op($2, $1, $3)
+    o 'LEFT_PAREN Expression RIGHT_PAREN',                -> $2
+    o 'Expression MATH Expression',                       -> new Op($2, $1, $3)
+    o 'Expression MATH_MULTI Expression',                 -> new Op($2, $1, $3)
+    o 'Expression OPERATOR Expression',                   -> new Op($2, $1, $3)
+    o 'Expression CONDITIONAL Expression',                -> new Op($2, $1, $3)
+    o 'Value'
   ]
   
   Value: [
@@ -102,10 +97,15 @@ grammar =
     o 'String'
     o 'Function'
     o 'UserFunction'
+    o 'Boolean'
   ]
   
   Number: [
     o 'NUMBER',                                           -> new NumberValue($1)
+  ]
+  
+  Boolean: [
+    o 'BOOLEAN',                                           -> new BooleanValue($1)
   ]
   
   String: [
@@ -125,7 +125,7 @@ grammar =
   ]
   
   ArgumentList: [
-    o 'Value',                                            -> [$1]
+    o 'Expression',                                       -> [$1]
     o 'ArgumentList SEPARATOR Value',                     -> $1.concat($3)
   ]
   
@@ -136,12 +136,16 @@ grammar =
   
   Field: [
     o 'STAR',                                             -> new Star()
-    o 'Value',                                            -> new Field($1)
-    o 'Value AS LITERAL',                                 -> new Field($1, $3)
+    o 'Expression',                                       -> new Field($1)
+    o 'Expression AS Literal',                            -> new Field($1, $3)
   ]
 
 tokens = []
 operators = [
+  ['left', 'Op']
+  ['left', 'MATH_MULTI']
+  ['left', 'MATH']
+  ['left', 'OPERATOR']
   ['left', 'CONDITIONAL']
 ]
 
