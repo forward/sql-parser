@@ -17,8 +17,15 @@ exports.Select = class Select
       ret.join("\n")
 
 exports.LiteralValue = class LiteralValue
-  constructor: (@value) -> null
-  toString: -> "`#{@value}`"
+  constructor: (@value, @value2=null) -> 
+    if @value2
+      @nested = true
+      @values = @value.values
+      @values.push(value2)
+    else
+      @nested = false
+      @values = [@value]
+  toString: -> "`#{@values.join('.')}`"
 
 exports.StringValue = class StringValue
   constructor: (@value) -> null

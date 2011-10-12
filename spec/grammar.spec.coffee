@@ -130,6 +130,13 @@ describe "SQL Grammer", ->
         WHERE MOD((LENGTH(`a`) + LENGTH(`b`)), `c`)
       """
 
+    it "supports nested fields using dot syntax", ->
+      expect(parse("SELECT a.b.c FROM my_table WHERE a.b > 2").toString()).toEqual """
+      SELECT `a.b.c`
+        FROM `my_table`
+        WHERE (`a.b` > 2)
+      """
+
     it "supports time window extensions", ->
       expect(parse("SELECT * FROM my_table.win:length(123)").toString()).toEqual """
       SELECT *

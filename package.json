@@ -1,7 +1,7 @@
 {
   "name": "sql-parser",
   "description": "Lexer and Parser for SQL Syntax",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": {
     "name": "Andy Kent",
     "email": "andy@forward.co.uk"

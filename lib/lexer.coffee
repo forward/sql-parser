@@ -15,6 +15,7 @@ class Lexer
                        @seperatorToken() or
                        @operatorToken() or
                        @mathToken() or
+                       @dotToken() or
                        @conditionalToken() or
                        @numberToken() or
                        @stringToken() or
@@ -63,6 +64,8 @@ class Lexer
     @tokenizeFromWord('HAVING') or
     @tokenizeFromWord('LIMIT') or
     @tokenizeFromWord('AS')
+  
+  dotToken: -> @tokenizeFromWord('DOT', '.')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  
   mathToken:        -> 
     @tokenizeFromList('MATH', MATH) or
