@@ -16,6 +16,15 @@ exports.Select = class Select
       ret.push indent(@limit.toString()) if @limit
       ret.join("\n")
 
+exports.SubSelect = class SubSelect
+  constructor: (@select, @name=null) -> null
+  toString: -> 
+    ret = []
+    ret.push '('
+    ret.push indent(@select.toString())
+    ret.push if @name then ") #{@name.toString()}" else ")"
+    ret.join("\n")
+
 exports.LiteralValue = class LiteralValue
   constructor: (@value, @value2=null) -> 
     if @value2

@@ -42,6 +42,8 @@ grammar =
   
   Table: [
     o 'Literal',                                          -> new Table($1)
+    o 'LEFT_PAREN Query RIGHT_PAREN',                     -> new SubSelect($2)
+    o 'LEFT_PAREN Query RIGHT_PAREN Literal',             -> new SubSelect($2, $4)
     o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
                                                           -> new Table($1, $2, $3, $5)
   ]

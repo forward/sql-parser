@@ -142,3 +142,21 @@ describe "SQL Grammer", ->
       SELECT *
         FROM `my_table`.win:length(123)
       """
+
+    it "parses sub selects", ->
+      expect(parse("select * from (select * from my_table)").toString()).toEqual """
+      SELECT *
+        FROM (
+          SELECT *
+            FROM `my_table`
+        )
+      """
+
+    it "parses named sub selects", ->
+      expect(parse("select * from (select * from my_table) t").toString()).toEqual """
+      SELECT *
+        FROM (
+          SELECT *
+            FROM `my_table`
+        ) `t`
+      """

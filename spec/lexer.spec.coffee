@@ -1,16 +1,31 @@
 lexer = require('../lib/lexer')
 
 describe "SQL Lexer", ->
-  describe "SELECT Queries", ->
-    it "tokenizes: SELECT * FROM my_table", ->
-      tokens = lexer.tokenize("select * from my_table")
-      expect(tokens).toEqual [
-        ["SELECT", "select", 1]
-        ["STAR", "*", 1]
-        ["FROM", "from", 1]
-        ["LITERAL", "my_table", 1]
-        ["EOF", "", 1]
-      ]
+  it "eats select queries", ->
+    tokens = lexer.tokenize("select * from my_table")
+    expect(tokens).toEqual [
+      ["SELECT", "select", 1]
+      ["STAR", "*", 1]
+      ["FROM", "from", 1]
+      ["LITERAL", "my_table", 1]
+      ["EOF", "", 1]
+    ]
+
+  it "eats sub selects", ->
+    tokens = lexer.tokenize("select * from (select * from my_table) t")
+    expect(tokens).toEqual [
+      ["SELECT", "select", 1]
+      ["STAR", "*", 1]
+      ["FROM", "from", 1]
+      [ 'LEFT_PAREN', '(', 1 ]
+      [ 'SELECT', 'select', 1 ]
+      [ 'STAR', '*', 1 ]
+      [ 'FROM', 'from', 1 ]
+      [ 'LITERAL', 'my_table', 1 ]
+      [ 'RIGHT_PAREN', ')', 1 ]
+      ["LITERAL", "t", 1]
+      ["EOF", "", 1]
+    ]
 
 # tokens = lexer.tokenize("SELECT * FROM my_stream WHERE name = 'andy' AND age = 28")
 # 
