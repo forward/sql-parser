@@ -2,7 +2,7 @@ indent = (str) ->
   ("  #{line}" for line in str.split("\n")).join("\n")
 
 exports.Select = class Select
-    constructor: (@fields, @source, @distinct=false) -> 
+    constructor: (@fields, @source, @distinct=false, @joins=[]) ->
       @order = null
       @group = null
       @where = null
@@ -10,6 +10,7 @@ exports.Select = class Select
     toString: ->
       ret = ["SELECT #{@fields.join(', ')}"] 
       ret.push indent("FROM #{@source}")
+      ret.push indent(join.toString()) for join in @joins
       ret.push indent(@where.toString()) if @where
       ret.push indent(@group.toString()) if @group
       ret.push indent(@order.toString()) if @order
@@ -24,6 +25,14 @@ exports.SubSelect = class SubSelect
     ret.push indent(@select.toString())
     ret.push if @name then ") #{@name.toString()}" else ")"
     ret.join("\n")
+
+exports.Join = class Join
+  constructor: (@right, @condtions=null, @side=null, @mode=null) -> null
+  toString: -> 
+    ret = ''
+    ret += "#{@side} " if @side?
+    ret += "#{@mode} " if @mode?
+    ret + "JOIN #{@right}\n" + indent("ON #{@condtions}")
 
 exports.LiteralValue = class LiteralValue
   constructor: (@value, @value2=null) -> 

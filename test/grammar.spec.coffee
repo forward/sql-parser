@@ -160,3 +160,29 @@ describe "SQL Grammer", ->
             FROM `my_table`
         ) `t`
       """
+
+    it "parses single joins", ->
+      parse("select * from a join b on a.id = b.id").toString().should.eql """
+      SELECT *
+        FROM `a`
+        JOIN `b`
+          ON (`a.id` = `b.id`)
+      """
+
+    it "parses right outer joins", ->
+      parse("select * from a right outer join b on a.id = b.id").toString().should.eql """
+      SELECT *
+        FROM `a`
+        RIGHT OUTER JOIN `b`
+          ON (`a.id` = `b.id`)
+      """
+
+    it "parses multiple joins", ->
+      parse("select * from a join b on a.id = b.id join c on a.id = c.id").toString().should.eql """
+      SELECT *
+        FROM `a`
+        JOIN `b`
+          ON (`a.id` = `b.id`)
+        JOIN `c`
+          ON (`a.id` = `c.id`)
+      """

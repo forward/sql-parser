@@ -63,6 +63,12 @@ class Lexer
     @tokenizeFromWord('BY') or
     @tokenizeFromWord('HAVING') or
     @tokenizeFromWord('LIMIT') or
+    @tokenizeFromWord('JOIN') or
+    @tokenizeFromWord('LEFT') or
+    @tokenizeFromWord('RIGHT') or
+    @tokenizeFromWord('INNER') or
+    @tokenizeFromWord('OUTER') or
+    @tokenizeFromWord('ON') or
     @tokenizeFromWord('AS')
   
   dotToken: -> @tokenizeFromWord('DOT', '.')

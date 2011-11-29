@@ -38,6 +38,8 @@ grammar =
   SelectClause: [
     o 'SELECT Fields FROM Table',                         -> new Select($2, $4, false)
     o 'SELECT DISTINCT Fields FROM Table',                -> new Select($3, $5, true)
+    o 'SELECT Fields FROM Table Joins',                   -> new Select($2, $4, false, $5)
+    o 'SELECT DISTINCT Fields FROM Table Joins',          -> new Select($3, $5, true, $6)
   ]
   
   Table: [
@@ -46,6 +48,21 @@ grammar =
     o 'LEFT_PAREN Query RIGHT_PAREN Literal',             -> new SubSelect($2, $4)
     o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
                                                           -> new Table($1, $2, $3, $5)
+  ]
+  
+  Joins: [
+    o 'Join',                                             -> [$1]
+    o 'Joins Join',                                       -> $1.concat($2)
+  ]
+  
+  Join: [
+    o 'JOIN Table ON Expression',                         -> new Join($2, $4)
+    o 'LEFT JOIN Table ON Expression',                    -> new Join($3, $5, 'LEFT')
+    o 'RIGHT JOIN Table ON Expression',                   -> new Join($3, $5, 'RIGHT')
+    o 'LEFT INNER JOIN Table ON Expression',              -> new Join($4, $6, 'LEFT', 'INNER')
+    o 'RIGHT INNER JOIN Table ON Expression',             -> new Join($4, $6, 'RIGHT', 'INNER')
+    o 'LEFT OUTER JOIN Table ON Expression',              -> new Join($4, $6, 'LEFT', 'OUTER')
+    o 'RIGHT OUTER JOIN Table ON Expression',             -> new Join($4, $6, 'RIGHT', 'OUTER')
   ]
   
   WhereClause: [
