@@ -1,7 +1,7 @@
 {
   "name": "sql-parser",
   "description": "Lexer and Parser for SQL Syntax",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "author": {
     "name": "Andy Kent",
     "email": "andy@forward.co.uk"
@@ -10,8 +10,12 @@
     "lib" : "./lib"
   },
   "dependencies": {
-    "coffee-script": "1.0.1",
-    "jison": "0.2.11"
+    "coffee-script": "1.1.3",
+    "jison": "https://github.com/pvwoods/jison/tarball/master"
+  },
+  "devDependencies": {
+    "mocha"     : "0.0.8",
+    "should"    : "0.3.2"
   },
   "engines": [ 
     "node"
