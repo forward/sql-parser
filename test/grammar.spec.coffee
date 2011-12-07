@@ -186,3 +186,24 @@ describe "SQL Grammer", ->
         JOIN `c`
           ON (`a.id` = `c.id`)
       """
+
+    it "doesn't choke on escaped quotes", ->
+      parse("select * from a where foo = 'I\\'m'").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`foo` = 'I\\'m')
+      """
+
+    it "allows using double quotes", ->
+      parse('select * from a where foo = "a"').toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`foo` = "a")
+      """
+
+    it "allows nesting different quote styles", ->
+      parse("""select * from a where foo = "I'm" """).toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`foo` = "I'm")
+      """

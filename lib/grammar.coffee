@@ -128,7 +128,8 @@ grammar =
   ]
   
   String: [
-    o 'STRING',                                           -> new StringValue($1)
+    o 'STRING',                                           -> new StringValue($1, "'")
+    o 'DBLSTRING',                                        -> new StringValue($1, '"')
   ]
   
   Literal: [

@@ -46,8 +46,8 @@ exports.LiteralValue = class LiteralValue
   toString: -> "`#{@values.join('.')}`"
 
 exports.StringValue = class StringValue
-  constructor: (@value) -> null
-  toString: -> "'#{@value}'"
+  constructor: (@value, @quoteType="''") -> null
+  toString: -> "#{@quoteType}#{@value}#{@quoteType}"
 
 exports.NumberValue = class LiteralValue
   constructor: (value) -> @value = Number(value)
