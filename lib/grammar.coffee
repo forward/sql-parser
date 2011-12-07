@@ -15,11 +15,16 @@ grammar =
   ]
   
   Query: [
-    o "SelectWithLimitQuery"
     o "SelectQuery"
+    o "SelectQuery Unions",                                -> $1.unions = $2; $1
   ]
   
   SelectQuery: [
+    o "SelectWithLimitQuery"
+    o "BasicSelectQuery"
+  ]
+  
+  BasicSelectQuery: [
     o 'Select'
     o 'Select OrderClause',                               -> $1.order = $2; $1
     o 'Select GroupClause',                               -> $1.group = $2; $1
@@ -48,6 +53,16 @@ grammar =
     o 'LEFT_PAREN Query RIGHT_PAREN Literal',             -> new SubSelect($2, $4)
     o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
                                                           -> new Table($1, $2, $3, $5)
+  ]
+
+  Unions: [
+    o 'Union',                                            -> [$1]
+    o 'Unions Union',                                     -> $1.concat($3)
+  ]
+  
+  Union: [
+    o 'UNION SelectQuery',                                -> new Union($2)
+    o 'UNION ALL SelectQuery',                            -> new Union($3, true)
   ]
   
   Joins: [

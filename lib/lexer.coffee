@@ -69,7 +69,9 @@ class Lexer
     @tokenizeFromWord('INNER') or
     @tokenizeFromWord('OUTER') or
     @tokenizeFromWord('ON') or
-    @tokenizeFromWord('AS')
+    @tokenizeFromWord('AS') or
+    @tokenizeFromWord('UNION') or
+    @tokenizeFromWord('ALL')
   
   dotToken: -> @tokenizeFromWord('DOT', '.')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)  

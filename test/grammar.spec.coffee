@@ -186,7 +186,26 @@ describe "SQL Grammer", ->
         JOIN `c`
           ON (`a.id` = `c.id`)
       """
-
+      
+    it "parses UNIONs", ->
+      parse("select * from a union select * from b").toString().should.eql """
+      SELECT *
+        FROM `a`
+      UNION
+      SELECT *
+        FROM `b`
+      """
+      
+    it "parses UNION ALL", ->
+      parse("select * from a union all select * from b").toString().should.eql """
+      SELECT *
+        FROM `a`
+      UNION ALL
+      SELECT *
+        FROM `b`
+      """
+      
+  describe "string quoting", ->
     it "doesn't choke on escaped quotes", ->
       parse("select * from a where foo = 'I\\'m'").toString().should.eql """
       SELECT *

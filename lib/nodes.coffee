@@ -2,7 +2,7 @@ indent = (str) ->
   ("  #{line}" for line in str.split("\n")).join("\n")
 
 exports.Select = class Select
-    constructor: (@fields, @source, @distinct=false, @joins=[]) ->
+    constructor: (@fields, @source, @distinct=false, @joins=[], @unions=[]) ->
       @order = null
       @group = null
       @where = null
@@ -15,6 +15,7 @@ exports.Select = class Select
       ret.push indent(@group.toString()) if @group
       ret.push indent(@order.toString()) if @order
       ret.push indent(@limit.toString()) if @limit
+      ret.push union.toString() for union in @unions
       ret.join("\n")
 
 exports.SubSelect = class SubSelect
@@ -33,6 +34,12 @@ exports.Join = class Join
     ret += "#{@side} " if @side?
     ret += "#{@mode} " if @mode?
     ret + "JOIN #{@right}\n" + indent("ON #{@conditions}")
+
+exports.Union = class Union
+  constructor: (@query, @all=false) -> null
+  toString: -> 
+    all = if @all then ' ALL' else ''
+    "UNION#{all}\n#{@query.toString()}"
 
 exports.LiteralValue = class LiteralValue
   constructor: (@value, @value2=null) -> 
