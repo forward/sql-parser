@@ -27,12 +27,12 @@ exports.SubSelect = class SubSelect
     ret.join("\n")
 
 exports.Join = class Join
-  constructor: (@right, @condtions=null, @side=null, @mode=null) -> null
+  constructor: (@right, @conditions=null, @side=null, @mode=null) -> null
   toString: -> 
     ret = ''
     ret += "#{@side} " if @side?
     ret += "#{@mode} " if @mode?
-    ret + "JOIN #{@right}\n" + indent("ON #{@condtions}")
+    ret + "JOIN #{@right}\n" + indent("ON #{@conditions}")
 
 exports.LiteralValue = class LiteralValue
   constructor: (@value, @value2=null) -> 
