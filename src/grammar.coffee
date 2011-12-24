@@ -1,3 +1,4 @@
+{Parser} = require 'jison'
 
 unwrap = /^function\s*\(\)\s*\{\s*return\s*([\s\S]*);\s*\}/
 
@@ -192,6 +193,8 @@ for name, alternatives of grammar
     alt[1] = "return #{alt[1]}" if name is 'Root'
     alt
 
-exports.grammar = grammar
-exports.tokens = tokens
-exports.operators = operators.reverse()
+exports.parser = new Parser
+  tokens      : tokens.join ' '
+  bnf         : grammar
+  operators   : operators.reverse()
+  startSymbol : 'Root'

@@ -1,7 +1,8 @@
 lexer = require('../lib/lexer')
 parser = require("../lib/parser")
 
-parse = (query) -> parser.parse(lexer.tokenize(query))
+parse = (query) ->
+  parser.parse(lexer.tokenize(query))
 
 describe "SQL Grammer", ->
   describe "SELECT Queries", ->

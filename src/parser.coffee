@@ -1,14 +1,6 @@
-grammar = require('./grammar')
-
-{Parser} = require 'jison'
-
 buildParser = ->
 
-  parser = new Parser
-    tokens      : grammar.tokens.join ' '
-    bnf         : grammar.grammar
-    operators   : grammar.operators
-    startSymbol : 'Root'
+  parser = require('./compiled_parser').parser
 
   parser.lexer =
     lex: ->
@@ -23,4 +15,4 @@ buildParser = ->
   
 exports.parser = buildParser()
 
-exports.parse = (str) -> buildParser().parse(str)
+exports.parse = (str) -> buildParser().parse(str)  
