@@ -36,4 +36,9 @@ The parser only currently supports SELECT queries but is able to produce a Selec
       FROM `my_table`
       WHERE `foo` = 'bar'
     
-    
+
+
+Credits
+-------
+
+A lot of the boilerplate and compilation code in this project is borrowed from the CoffeeScript project as it was the best example of a project using JISON that I could find. Thanks.
