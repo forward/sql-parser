@@ -294,3 +294,11 @@ describe "SQL Grammar", ->
         WHERE (`a` = (1 * 2))
       """
 
+  describe "Parameters", ->
+    it "parses query parameters", ->
+      parse('select * from foo where bar = $12').toString().should.eql """
+      SELECT *
+        FROM `foo`
+        WHERE (`bar` = $12)
+      """
+

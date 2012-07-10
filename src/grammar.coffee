@@ -143,6 +143,7 @@ grammar =
     o 'Function'
     o 'UserFunction'
     o 'Boolean'
+    o 'Parameter'
   ]
 
   List: [
@@ -155,6 +156,10 @@ grammar =
 
   Boolean: [
     o 'BOOLEAN',                                           -> new BooleanValue($1)
+  ]
+
+  Parameter: [
+    o 'PARAMETER',                                        -> new ParameterValue($1)
   ]
 
   String: [

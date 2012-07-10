@@ -64,6 +64,12 @@ exports.ListValue = class ListValue
   constructor: (value) -> @value = value
   toString: -> "(#{@value.join(', ')})"
 
+exports.ParameterValue = class ParameterValue
+  constructor: (value) ->
+    @value = value
+    @index = parseInt(value.substr(1), 10) - 1
+  toString: -> "#{@value}"
+
 exports.ArgumentListValue = class ArgumentListValue
   constructor: (@value, @distinct=false) -> null
   toString: ->
