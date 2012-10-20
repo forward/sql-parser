@@ -19,6 +19,7 @@ class Lexer
                        @conditionalToken() or
                        @numberToken() or
                        @stringToken() or
+                       @parameterToken() or
                        @parensToken() or
                        @whitespaceToken() or
                        @literalToken()
@@ -87,6 +88,7 @@ class Lexer
   seperatorToken:   -> @tokenizeFromRegex('SEPARATOR', SEPARATOR)
   literalToken:     -> @tokenizeFromRegex('LITERAL', LITERAL, 1, 0)
   numberToken:      -> @tokenizeFromRegex('NUMBER', NUMBER)
+  parameterToken:   -> @tokenizeFromRegex('PARAMETER', PARAMETER)
   stringToken:      -> 
     @tokenizeFromRegex('STRING', STRING, 1, 0) ||
     @tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0)
@@ -126,6 +128,7 @@ class Lexer
   SEPARATOR           = /^,/
   WHITESPACE          = /^[ \n\r]+/
   LITERAL             = /^`?([a-z_][a-z0-9_]{0,})`?/i
+  PARAMETER           = /^\$[0-9]+/
   NUMBER              = /^[0-9]+(\.[0-9]+)?/
   STRING              = /^'([^\\']*(?:\\.[^\\']*)*)'/
   DBLSTRING           = /^"([^\\"]*(?:\\.[^\\"]*)*)"/
