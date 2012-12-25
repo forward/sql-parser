@@ -6,18 +6,18 @@
     "name": "Andy Kent",
     "email": "andy@forward.co.uk"
   },
-  "directories": { 
+  "directories": {
     "lib" : "./lib"
   },
   "dependencies": {
   },
   "devDependencies": {
-    "jison": "https://github.com/pvwoods/jison/tarball/master",
-    "coffee-script": "1.2.0",
-    "mocha"     : "0.3.2",
-    "should"    : "0.3.2"
+    "jison": "0.3.12",
+    "coffee-script": "1.4.0",
+    "mocha"     : "1.7.4",
+    "should"    : "1.2.1"
   },
-  "engines": [ 
+  "engines": [
     "node"
   ],
   "repository": {
