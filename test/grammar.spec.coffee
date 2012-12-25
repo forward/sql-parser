@@ -6,42 +6,42 @@ parse = (query) ->
 
 describe "SQL Grammer", ->
   describe "SELECT Queries", ->
-    
+
     it "parses ORDER BY clauses", ->
       parse("SELECT * FROM my_table ORDER BY x DESC").toString().should.eql """
       SELECT *
         FROM `my_table`
         ORDER BY `x` DESC
       """
-    
+
     it "parses GROUP BY clauses", ->
       parse("SELECT * FROM my_table GROUP BY x, y").toString().should.eql """
       SELECT *
         FROM `my_table`
         GROUP BY `x`, `y`
       """
-    
+
     it "parses LIMIT clauses", ->
       parse("SELECT * FROM my_table LIMIT 10").toString().should.eql """
       SELECT *
         FROM `my_table`
         LIMIT 10
       """
-    
+
     it "parses SELECTs with FUNCTIONs", ->
       parse("SELECT a, COUNT(1, b) FROM my_table LIMIT 10").toString().should.eql """
       SELECT `a`, COUNT(1, `b`)
         FROM `my_table`
         LIMIT 10
       """
-    
+
     it "parses WHERE clauses", ->
       parse("SELECT * FROM my_table WHERE x > 1 AND y = 'foo'").toString().should.eql """
       SELECT *
         FROM `my_table`
         WHERE ((`x` > 1) AND (`y` = 'foo'))
       """
-    
+
     it "parses complex WHERE clauses", ->
       parse("SELECT * FROM my_table WHERE a > 10 AND (a < 30 OR b = 'c')").toString().should.eql """
       SELECT *
@@ -187,7 +187,7 @@ describe "SQL Grammer", ->
         JOIN `c`
           ON (`a.id` = `c.id`)
       """
-      
+
     it "parses UNIONs", ->
       parse("select * from a union select * from b").toString().should.eql """
       SELECT *
@@ -196,7 +196,7 @@ describe "SQL Grammer", ->
       SELECT *
         FROM `b`
       """
-      
+
     it "parses UNION ALL", ->
       parse("select * from a union all select * from b").toString().should.eql """
       SELECT *
@@ -205,7 +205,7 @@ describe "SQL Grammer", ->
       SELECT *
         FROM `b`
       """
-      
+
   describe "string quoting", ->
     it "doesn't choke on escaped quotes", ->
       parse("select * from a where foo = 'I\\'m'").toString().should.eql """
@@ -226,4 +226,22 @@ describe "SQL Grammer", ->
       SELECT *
         FROM `a`
         WHERE (`foo` = "I'm")
+      """
+
+  describe "IN clauses", ->
+    it "parses an IN clause containing a list", ->
+      parse("""select * from a where x in (1,2,3)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`x` IN (1, 2, 3))
+      """
+
+    it "parses an IN clause containing a query", ->
+      parse("""select * from a where x in (select foo from bar)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`x` IN (
+          SELECT `foo`
+            FROM `bar`
+        ))
       """

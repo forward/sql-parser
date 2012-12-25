@@ -8,7 +8,7 @@ exports.Select = class Select
       @where = null
       @limit = null
     toString: ->
-      ret = ["SELECT #{@fields.join(', ')}"] 
+      ret = ["SELECT #{@fields.join(', ')}"]
       ret.push indent("FROM #{@source}")
       ret.push indent(join.toString()) for join in @joins
       ret.push indent(@where.toString()) if @where
@@ -20,7 +20,7 @@ exports.Select = class Select
 
 exports.SubSelect = class SubSelect
   constructor: (@select, @name=null) -> null
-  toString: -> 
+  toString: ->
     ret = []
     ret.push '('
     ret.push indent(@select.toString())
@@ -29,7 +29,7 @@ exports.SubSelect = class SubSelect
 
 exports.Join = class Join
   constructor: (@right, @conditions=null, @side=null, @mode=null) -> null
-  toString: -> 
+  toString: ->
     ret = ''
     ret += "#{@side} " if @side?
     ret += "#{@mode} " if @mode?
@@ -37,12 +37,12 @@ exports.Join = class Join
 
 exports.Union = class Union
   constructor: (@query, @all=false) -> null
-  toString: -> 
+  toString: ->
     all = if @all then ' ALL' else ''
     "UNION#{all}\n#{@query.toString()}"
 
 exports.LiteralValue = class LiteralValue
-  constructor: (@value, @value2=null) -> 
+  constructor: (@value, @value2=null) ->
     if @value2
       @nested = true
       @values = @value.values
@@ -60,8 +60,12 @@ exports.NumberValue = class LiteralValue
   constructor: (value) -> @value = Number(value)
   toString: -> @value.toString()
 
+exports.ListValue = class ListValue
+  constructor: (value) -> @value = value
+  toString: -> "(#{@value.join(', ')})"
+
 exports.BooleanValue = class LiteralValue
-  constructor: (value) -> 
+  constructor: (value) ->
     @value = switch value.toLowerCase()
       when 'true'
         true
@@ -89,7 +93,7 @@ exports.Limit = class Limit
 
 exports.Table = class Table
   constructor: (@name, @win=null, @winFn=null, @winArg=null) -> null
-  toString: -> 
+  toString: ->
     if @win
       "#{@name}.#{@win}:#{@winFn}(#{@winArg})"
     else
@@ -98,7 +102,7 @@ exports.Table = class Table
 exports.Group = class Group
   constructor: (@fields) ->
     @having = null
-  toString: -> 
+  toString: ->
     ret = ["GROUP BY #{@fields.join(', ')}"]
     ret.push @having.toString() if @having
     ret.join("\n")
@@ -113,7 +117,7 @@ exports.Having = class Having
 
 exports.Op = class Op
   constructor: (@operation, @left, @right) -> null
-  toString: -> "(#{@left} #{@operation} #{@right})"
+  toString: -> "(#{@left} #{@operation.toUpperCase()} #{@right})"
 
 exports.Field = class Field
   constructor: (@field, @name=null) -> null
@@ -123,4 +127,3 @@ exports.Star = class Star
   constructor: () -> null
   toString: -> '*'
   star: true
-      
