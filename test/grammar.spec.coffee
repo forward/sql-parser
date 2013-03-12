@@ -4,7 +4,7 @@ parser = require("../lib/parser")
 parse = (query) ->
   parser.parse(lexer.tokenize(query))
 
-describe "SQL Grammer", ->
+describe "SQL Grammar", ->
   describe "SELECT Queries", ->
 
     it "parses ORDER BY clauses", ->
@@ -31,6 +31,13 @@ describe "SQL Grammer", ->
     it "parses SELECTs with FUNCTIONs", ->
       parse("SELECT a, COUNT(1, b) FROM my_table LIMIT 10").toString().should.eql """
       SELECT `a`, COUNT(1, `b`)
+        FROM `my_table`
+        LIMIT 10
+      """
+
+    it "parses COUNT(DISTINCT field)", ->
+      parse("select a, count(distinct b) FROM my_table limit 10").toString().should.eql """
+      SELECT `a`, COUNT(DISTINCT `b`)
         FROM `my_table`
         LIMIT 10
       """
@@ -228,7 +235,7 @@ describe "SQL Grammer", ->
         WHERE (`foo` = "I'm")
       """
 
-  describe "IN clauses", ->
+  describe "subselect clauses", ->
     it "parses an IN clause containing a list", ->
       parse("""select * from a where x in (1,2,3)""").toString().should.eql """
       SELECT *
@@ -244,4 +251,37 @@ describe "SQL Grammer", ->
           SELECT `foo`
             FROM `bar`
         ))
+      """
+
+    it "parses a NOT IN clause containing a query", ->
+      parse("""select * from a where x not in (select foo from bar)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`x` NOT IN (
+          SELECT `foo`
+            FROM `bar`
+        ))
+      """
+
+    it "parses an EXISTS clause containing a query", ->
+      parse("""select * from a where exists (select foo from bar)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (EXISTS (
+          SELECT `foo`
+            FROM `bar`
+        ))
+      """
+
+  describe "aliases", ->
+    it "parses aliased table names", ->
+      parse("""select * from a b""").toString().should.eql """
+      SELECT *
+        FROM `a` AS `b`
+      """
+
+    it "parses aliased table names with as", ->
+      parse("""select * from a as b""").toString().should.eql """
+      SELECT *
+        FROM `a` AS `b`
       """
