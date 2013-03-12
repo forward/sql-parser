@@ -17,7 +17,8 @@ class Lexer
                        @mathToken() or
                        @dotToken() or
                        @conditionalToken() or
-                       @inToken() or
+                       @subSelectOpToken() or
+                       @subSelectUnaryOpToken() or
                        @numberToken() or
                        @stringToken() or
                        @parensToken() or
@@ -88,7 +89,8 @@ class Lexer
     @tokenizeFromList('MATH', MATH) or
     @tokenizeFromList('MATH_MULTI', MATH_MULTI)
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
-  inToken:          -> @tokenizeFromList('IN', SQL_IN)
+  subSelectOpToken: -> @tokenizeFromList('SUB_SELECT_OP', SUB_SELECT_OP)
+  subSelectUnaryOpToken: -> @tokenizeFromList('SUB_SELECT_UNARY_OP', SUB_SELECT_UNARY_OP)
   functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
   sortOrderToken:   -> @tokenizeFromList('DIRECTION', SQL_SORT_ORDERS)
   booleanToken:     -> @tokenizeFromList('BOOLEAN', BOOLEAN)
@@ -127,8 +129,9 @@ class Lexer
   SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS']
   SQL_FUNCTIONS       = ['AVG', 'COUNT', 'MIN', 'MAX', 'SUM']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
-  SQL_OPERATORS       = ['=', '>', '<', 'LIKE', 'IS NOT', 'IS']
-  SQL_IN              = ['IN']
+  SQL_OPERATORS       = ['=', '!=', '>=', '>', '<=', '<>', '<', 'LIKE', 'IS NOT', 'IS']
+  SUB_SELECT_OP       = ['IN', 'NOT IN', 'ANY', 'ALL', 'SOME']
+  SUB_SELECT_UNARY_OP = ['EXISTS']
   SQL_CONDITIONALS    = ['AND', 'OR']
   BOOLEAN             = ['TRUE', 'FALSE', 'NULL']
   MATH                = ['+', '-']
