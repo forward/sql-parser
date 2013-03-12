@@ -50,11 +50,13 @@ grammar =
 
   Table: [
     o 'Literal',                                          -> new Table($1)
+    o 'Literal Literal',                                  -> new Table($1, $2)
+    o 'Literal AS Literal',                               -> new Table($1, $3)
     o 'LEFT_PAREN List RIGHT_PAREN',                      -> $2
     o 'LEFT_PAREN Query RIGHT_PAREN',                     -> new SubSelect($2)
     o 'LEFT_PAREN Query RIGHT_PAREN Literal',             -> new SubSelect($2, $4)
     o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
-                                                          -> new Table($1, $2, $3, $5)
+                                                          -> new Table($1, null, $2, $3, $5)
   ]
 
   Unions: [
@@ -124,8 +126,14 @@ grammar =
     o 'Expression MATH_MULTI Expression',                 -> new Op($2, $1, $3)
     o 'Expression OPERATOR Expression',                   -> new Op($2, $1, $3)
     o 'Expression CONDITIONAL Expression',                -> new Op($2, $1, $3)
-    o 'Value IN Table',                                   -> new Op($2, $1, $3)
+    o 'Value SUB_SELECT_OP LEFT_PAREN List RIGHT_PAREN',  -> new Op($2, $1, $4)
+    o 'Value SUB_SELECT_OP SubSelectExpression',          -> new Op($2, $1, $3)
+    o 'SUB_SELECT_UNARY_OP SubSelectExpression',          -> new UnaryOp($1, $2)
     o 'Value'
+  ]
+
+  SubSelectExpression: [
+    o 'LEFT_PAREN Query RIGHT_PAREN',                     -> new SubSelect($2)
   ]
 
   Value: [
@@ -160,11 +168,16 @@ grammar =
   ]
 
   Function: [
-    o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
+    o "FUNCTION LEFT_PAREN AggregateArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
   ]
 
   UserFunction: [
-    o "LITERAL LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3, true)
+    o "LITERAL LEFT_PAREN AggregateArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3, true)
+  ]
+
+  AggregateArgumentList: [
+    o 'ArgumentList',                                    -> new ArgumentListValue($1)
+    o 'DISTINCT ArgumentList',                           -> new ArgumentListValue($2, true)
   ]
 
   ArgumentList: [
