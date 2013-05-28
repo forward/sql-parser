@@ -1,7 +1,7 @@
 {
-  "name": "sql-parser",
-  "description": "Lexer and Parser for SQL Syntax",
-  "version": "0.4.1",
+  "name": "river-sql-parser",
+  "description": "Lexer and Parser for River Specific SQL Syntax",
+  "version": "0.5.0",
   "author": {
     "name": "Andy Kent",
     "email": "andy@forward.co.uk"
@@ -12,10 +12,10 @@
   "dependencies": {
   },
   "devDependencies": {
-    "jison": "0.3.12",
-    "coffee-script": "1.4.0",
-    "mocha"     : "1.7.4",
-    "should"    : "1.2.1"
+    "jison"         : "0.3.12",
+    "coffee-script" : "1.4.0",
+    "mocha"         : "1.7.4",
+    "should"        : "1.2.1"
   },
   "engines": [
     "node"
