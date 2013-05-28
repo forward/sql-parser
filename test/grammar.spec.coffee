@@ -245,3 +245,43 @@ describe "SQL Grammer", ->
             FROM `bar`
         ))
       """
+
+
+  describe "selecting from a PATTERN", ->
+    it "parses simple pattern clauses", ->
+      parse("""select * from pattern [andy=tweets -> other=tweets]""").toString().should.eql """
+      SELECT *
+        FROM PATTERN [
+          `andy` = `tweets` ->
+          `other` = `tweets`
+        ]
+      """
+
+    it "parses simple pattern clauses with windows", ->
+      parse("""select * from pattern [andy=tweets -> other=tweets].win:length(2)""").toString().should.eql """
+      SELECT *
+        FROM PATTERN [
+          `andy` = `tweets` ->
+          `other` = `tweets`
+        ].win:length(2)
+      """
+
+    it "parses many pattern clauses in correct order", ->
+      parse("""select * from pattern [a=x -> b=x -> c=x -> d=x]""").toString().should.eql """
+      SELECT *
+        FROM PATTERN [
+          `a` = `x` ->
+          `b` = `x` ->
+          `c` = `x` ->
+          `d` = `x`
+        ]
+      """
+
+    it "parses pattern clauses with conditions", ->
+      parse("""select * from pattern [andy=tweets(username='andy') -> sunny=tweets(username='sunny')]""").toString().should.eql """
+      SELECT *
+        FROM PATTERN [
+          `andy` = `tweets`(`username` = 'andy') ->
+          `sunny` = `tweets`(`username` = 'sunny')
+        ]
+      """

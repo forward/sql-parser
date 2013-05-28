@@ -127,3 +127,23 @@ exports.Star = class Star
   constructor: () -> null
   toString: -> '*'
   star: true
+
+exports.Pattern = class Pattern
+  constructor: (@constraints) -> null
+  setWindow: (@win, @winFn, @winArg) -> this
+  toString: ->
+    steps = []
+    for constraint in @constraints
+      steps.push indent(constraint.toString())
+    ret = "PATTERN [\n#{steps.join(' ->\n')}\n]"
+    ret += ".#{@win}:#{@winFn}(#{@winArg})" if @win
+    ret
+
+exports.PatternConstraint = class PatternConstraint
+  constructor: (@alias, @table, @conditions=null) ->
+  toString: ->
+    ret = "`#{@alias}` = `#{@table}`"
+    ret += @conditions.toString() if @conditions
+    ret
+
+

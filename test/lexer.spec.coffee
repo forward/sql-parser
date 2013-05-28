@@ -40,7 +40,7 @@ describe "SQL Lexer", ->
       [ 'LITERAL', 'a', 1 ]
       [ 'DOT', '.', 1 ]
       [ 'LITERAL', 'id', 1 ]
-      [ 'OPERATOR', '=', 1 ]
+      [ 'EQUAL', '=', 1 ]
       [ 'LITERAL', 'b', 1 ]
       [ 'DOT', '.', 1 ]
       [ 'LITERAL', 'id', 1 ]

@@ -50,11 +50,30 @@ grammar =
 
   Table: [
     o 'Literal',                                          -> new Table($1)
+    o 'Pattern',                                          -> $1
     o 'LEFT_PAREN List RIGHT_PAREN',                      -> $2
     o 'LEFT_PAREN Query RIGHT_PAREN',                     -> new SubSelect($2)
     o 'LEFT_PAREN Query RIGHT_PAREN Literal',             -> new SubSelect($2, $4)
     o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
                                                           -> new Table($1, $2, $3, $5)
+    o 'Pattern WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
+                                                          -> $1.setWindow($2, $3, $5)
+  ]
+
+  Pattern: [
+    o 'PATTERN LEFT_SQUARE_BRACKET PatternClauses RIGHT_SQUARE_BRACKET',
+                                                          -> new Pattern($3)
+  ]
+
+  PatternClauses: [
+    o 'PatternClauses RIGHT_ROCKET PatternClause',        -> $1.concat($3)
+    o 'PatternClause',                                    -> [$1]
+  ]
+
+  PatternClause: [
+    o 'LITERAL EQUAL LITERAL LEFT_PAREN Expression RIGHT_PAREN',
+                                                          -> new PatternConstraint($1, $3, $5)
+    o 'LITERAL EQUAL LITERAL',                            -> new PatternConstraint($1, $3)
   ]
 
   Unions: [
@@ -122,6 +141,7 @@ grammar =
     o 'LEFT_PAREN Expression RIGHT_PAREN',                -> $2
     o 'Expression MATH Expression',                       -> new Op($2, $1, $3)
     o 'Expression MATH_MULTI Expression',                 -> new Op($2, $1, $3)
+    o 'Expression EQUAL Expression',                      -> new Op($2, $1, $3)
     o 'Expression OPERATOR Expression',                   -> new Op($2, $1, $3)
     o 'Expression CONDITIONAL Expression',                -> new Op($2, $1, $3)
     o 'Value IN Table',                                   -> new Op($2, $1, $3)
@@ -188,6 +208,7 @@ operators = [
   ['left', 'Op']
   ['left', 'MATH_MULTI']
   ['left', 'MATH']
+  ['left', 'EQUAL']
   ['left', 'OPERATOR']
   ['left', 'CONDITIONAL']
 ]

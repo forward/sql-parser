@@ -14,6 +14,7 @@ class Lexer
                        @sortOrderToken() or
                        @seperatorToken() or
                        @operatorToken() or
+                       @patternToken() or
                        @mathToken() or
                        @dotToken() or
                        @conditionalToken() or
@@ -72,10 +73,13 @@ class Lexer
     @tokenizeFromWord('ON') or
     @tokenizeFromWord('AS') or
     @tokenizeFromWord('UNION') or
-    @tokenizeFromWord('ALL')
+    @tokenizeFromWord('ALL') or
+    @tokenizeFromWord('PATTERN')
 
   dotToken: -> @tokenizeFromWord('DOT', '.')
-  operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)
+  operatorToken:    ->
+    @tokenizeFromList('EQUAL', SQL_EQUALS) or
+    @tokenizeFromList('OPERATOR', SQL_OPERATORS)
   mathToken:        ->
     @tokenizeFromList('MATH', MATH) or
     @tokenizeFromList('MATH_MULTI', MATH_MULTI)
@@ -95,8 +99,13 @@ class Lexer
 
 
   parensToken: ->
-    @tokenizeFromRegex('LEFT_PAREN', /^\(/,) or
-    @tokenizeFromRegex('RIGHT_PAREN', /^\)/,)
+    @tokenizeFromRegex('LEFT_PAREN', /^\(/) or
+    @tokenizeFromRegex('RIGHT_PAREN', /^\)/)
+
+  patternToken: ->
+    @tokenizeFromRegex('LEFT_SQUARE_BRACKET', /^\[/) or
+    @tokenizeFromRegex('RIGHT_SQUARE_BRACKET', /^\]/) or
+    @tokenizeFromRegex('RIGHT_ROCKET', /^\->/)
 
   windowExtension: ->
     match = (/^\.(win):(length|time)/i).exec(@chunk)
@@ -119,7 +128,8 @@ class Lexer
   SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS']
   SQL_FUNCTIONS       = ['AVG', 'COUNT', 'MIN', 'MAX', 'SUM']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
-  SQL_OPERATORS       = ['=', '>', '<', 'LIKE', 'IS NOT', 'IS']
+  SQL_EQUALS          = ['=']
+  SQL_OPERATORS       = ['>', '<', 'LIKE', 'IS NOT', 'IS']
   SQL_IN              = ['IN']
   SQL_CONDITIONALS    = ['AND', 'OR']
   BOOLEAN             = ['TRUE', 'FALSE', 'NULL']
