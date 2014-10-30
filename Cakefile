@@ -2,7 +2,7 @@
 fs = require('fs')
 
 run = (args, cb) ->
-  proc =         spawn 'coffee', args
+  proc =         spawn './node_modules/.bin/coffee', args
   proc.stderr.on 'data', (buffer) -> console.log buffer.toString()
   proc.on        'exit', (status) ->
     process.exit(1) if status != 0
@@ -18,9 +18,9 @@ task 'build', 'Run full build', ->
   invoke 'build:parser'
   setTimeout (-> invoke 'build:browser'), 100
 
-task 'build:compile', 'Compile all coffee files to js', 
+task 'build:compile', 'Compile all coffee files to js',
   build
-    
+
 task 'build:parser', 'rebuild the Jison parser', ->
   parser = require('./src/grammar').parser
   fs.writeFileSync 'lib/compiled_parser.js', parser.generate()
@@ -48,6 +48,5 @@ task 'build:browser', 'Build a single JS file suitable for use in the browser', 
     }(this));
   """
   fs.writeFileSync './browser/sql-parser.js', code
-  
-  
-  
+
+
