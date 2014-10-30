@@ -26,6 +26,14 @@ class Lexer
       throw new Error("NOTHING CONSUMED: Stopped at - '#{@chunk.slice(0,30)}'") if bytesConsumed < 1
       i += bytesConsumed
     @token('EOF', '')
+    @postProcess()
+
+  postProcess: ->
+    for token, i in @tokens
+      if token[0] is 'STAR'
+        next_token = @tokens[i+1]
+        unless next_token[0] is 'SEPARATOR' or next_token[0] is 'FROM'
+          token[0] = 'MATH_MULTI'
 
   token: (name, value) ->
     @tokens.push([name, value, @currentLine])

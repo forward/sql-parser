@@ -245,3 +245,11 @@ describe "SQL Grammer", ->
             FROM `bar`
         ))
       """
+
+  describe "STARS", ->
+    it "parses stars as multiplcation", ->
+      parse('SELECT * FROM foo WHERE a = 1*2').toString().should.eql """
+      SELECT *
+        FROM `foo`
+        WHERE (`a` = (1 * 2))
+      """
