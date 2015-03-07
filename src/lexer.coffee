@@ -80,7 +80,9 @@ class Lexer
     @tokenizeFromWord('ON') or
     @tokenizeFromWord('AS') or
     @tokenizeFromWord('UNION') or
-    @tokenizeFromWord('ALL')
+    @tokenizeFromWord('ALL') or
+    @tokenizeFromWord('UPDATE') or
+    @tokenizeFromWord('SET')
 
   dotToken: -> @tokenizeFromWord('DOT', '.')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)
@@ -124,7 +126,7 @@ class Lexer
   regexEscape: (str) ->
     str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
 
-  SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS']
+  SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS', 'UPDATE', 'SET']
   SQL_FUNCTIONS       = ['AVG', 'COUNT', 'MIN', 'MAX', 'SUM']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
   SQL_OPERATORS       = ['=', '>', '<', 'LIKE', 'IS NOT', 'IS']

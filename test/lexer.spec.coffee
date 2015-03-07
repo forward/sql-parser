@@ -63,3 +63,15 @@ describe "SQL Lexer", ->
       [ 'LITERAL', 'id', 1 ]
       ["EOF", "", 1]
     ]
+
+  it 'eats update', ->
+    tokens = lexer.tokenize('update a set f1 = f2')
+    tokens.should.eql [
+      ['UPDATE', 'update', 1]
+      ['LITERAL', 'a', 1]
+      ['SET', 'set', 1]
+      ['LITERAL', 'f1', 1 ]
+      ['OPERATOR', '=', 1 ]
+      ['LITERAL', 'f2', 1 ]
+      ['EOF', '', 1]
+    ]
