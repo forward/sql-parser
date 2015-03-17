@@ -50,6 +50,7 @@ exports.LiteralValue = class LiteralValue
     else
       @nested = false
       @values = [@value]
+  # TODO: Backtick quotes only supports MySQL, Postgres uses double-quotes
   toString: -> "`#{@values.join('.')}`"
 
 exports.StringValue = class StringValue
@@ -98,16 +99,22 @@ exports.FunctionValue = class FunctionValue
       "#{@name.toUpperCase()}()"
 
 exports.Order = class Order
-  constructor: (@orderings) ->
-  toString: -> "ORDER BY #{@orderings.join(', ')}"
+  constructor: (@orderings, @offset) ->
+  toString: -> "ORDER BY #{@orderings.join(', ')}" +
+    (if @offset then "\n" + @offset.toString() else "")
 
 exports.OrderArgument = class OrderArgument
   constructor: (@value, @direction='ASC') -> null
   toString: -> "#{@value} #{@direction}"
 
+exports.Offset = class Offset
+  constructor: (@row_count, @limit) -> null
+  toString: -> "OFFSET #{@row_count} ROWS" +
+    (if @limit then "\nFETCH NEXT #{@limit} ROWS ONLY" else "")
+
 exports.Limit = class Limit
-  constructor: (@value) -> null
-  toString: -> "LIMIT #{@value}"
+  constructor: (@value, @offset) -> null
+  toString: -> "LIMIT #{@value}" + (if @offset then "\nOFFSET #{@offset}" else "")
 
 exports.Table = class Table
   constructor: (@name, @alias=null, @win=null, @winFn=null, @winArg=null) -> null

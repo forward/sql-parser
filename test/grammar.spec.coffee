@@ -14,6 +14,40 @@ describe "SQL Grammar", ->
         ORDER BY `x` DESC
       """
 
+    it "parses ORDER BY clauses with OFFSET n ROWS", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROWS").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROW", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROW").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROW FETCH FIRST n ONLY", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROW FETCH FIRST 15 ROW ONLY").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+        FETCH NEXT 15 ROWS ONLY
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROW FETCH NEXT n ONLY", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROW FETCH NEXT 15 ROWS ONLY").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+        FETCH NEXT 15 ROWS ONLY
+      """
+
     it "parses GROUP BY clauses", ->
       parse("SELECT * FROM my_table GROUP BY x, y").toString().should.eql """
       SELECT *
@@ -26,6 +60,30 @@ describe "SQL Grammar", ->
       SELECT *
         FROM `my_table`
         LIMIT 10
+      """
+
+    it "parses LIMIT clauses after ORDER BY", ->
+      parse("SELECT * FROM my_table ORDER BY cat DESC LIMIT 10").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `cat` DESC
+        LIMIT 10
+      """
+
+    it "parses LIMIT clauses with comma separated offset", ->
+      parse("SELECT * FROM my_table LIMIT 30, 10").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        LIMIT 10
+        OFFSET 30
+      """
+
+    it "parses LIMIT clauses with OFFSET keyword", ->
+      parse("SELECT * FROM my_table LIMIT 10 OFFSET 30").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        LIMIT 10
+        OFFSET 30
       """
 
     it "parses SELECTs with FUNCTIONs", ->

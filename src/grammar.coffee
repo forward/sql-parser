@@ -90,10 +90,13 @@ grammar =
 
   LimitClause: [
     o 'LIMIT Number',                                     -> new Limit($2)
+    o 'LIMIT Number SEPARATOR Number',                    -> new Limit($4, $2)
+    o 'LIMIT Number OFFSET Number',                       -> new Limit($2, $4)
   ]
 
   OrderClause: [
     o 'ORDER BY OrderArgs',                               -> new Order($3)
+    o 'ORDER BY OrderArgs OffsetClause',                  -> new Order($3, $4)
   ]
 
   OrderArgs: [
@@ -104,6 +107,22 @@ grammar =
   OrderArg: [
     o 'Value',                                            -> new OrderArgument($1, 'ASC')
     o 'Value DIRECTION',                                  -> new OrderArgument($1, $2)
+  ]
+
+  OffsetClause: [
+    # MS SQL Server 2012+
+    o 'OFFSET OffsetRows',                                -> new Offset($2)
+    o 'OFFSET OffsetRows FetchClause',                    -> new Offset($2, $3)
+  ]
+
+  OffsetRows: [
+    o 'Number ROW',                                       -> $1
+    o 'Number ROWS',                                      -> $1
+  ]
+
+  FetchClause: [
+    o 'FETCH FIRST OffsetRows ONLY',                      -> $3
+    o 'FETCH NEXT OffsetRows ONLY',                       -> $3
   ]
 
   GroupClause: [
