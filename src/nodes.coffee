@@ -50,6 +50,7 @@ exports.LiteralValue = class LiteralValue
     else
       @nested = false
       @values = [@value]
+  # TODO: Backtick quotes only supports MySQL, Postgres uses double-quotes
   toString: -> "`#{@values.join('.')}`"
 
 exports.StringValue = class StringValue
@@ -64,6 +65,20 @@ exports.ListValue = class ListValue
   constructor: (value) -> @value = value
   toString: -> "(#{@value.join(', ')})"
 
+exports.ParameterValue = class ParameterValue
+  constructor: (value) ->
+    @value = value
+    @index = parseInt(value.substr(1), 10) - 1
+  toString: -> "#{@value}"
+
+exports.ArgumentListValue = class ArgumentListValue
+  constructor: (@value, @distinct=false) -> null
+  toString: ->
+    if @distinct
+      "DISTINCT #{@value.join(', ')}"
+    else
+      "#{@value.join(', ')}"
+
 exports.BooleanValue = class LiteralValue
   constructor: (value) ->
     @value = switch value.toLowerCase()
@@ -76,26 +91,38 @@ exports.BooleanValue = class LiteralValue
   toString: -> if @value? then @value.toString().toUpperCase() else 'NULL'
 
 exports.FunctionValue = class FunctionValue
-  constructor: (@name, @arguments=[], @udf=false) -> null
-  toString: -> "#{@name}(#{@arguments.join(', ')})"
+  constructor: (@name, @arguments=null, @udf=false) -> null
+  toString: ->
+    if @arguments
+      "#{@name.toUpperCase()}(#{@arguments.toString()})"
+    else
+      "#{@name.toUpperCase()}()"
 
 exports.Order = class Order
-  constructor: (@orderings) ->
-  toString: -> "ORDER BY #{@orderings.join(', ')}"
+  constructor: (@orderings, @offset) ->
+  toString: -> "ORDER BY #{@orderings.join(', ')}" +
+    (if @offset then "\n" + @offset.toString() else "")
 
 exports.OrderArgument = class OrderArgument
   constructor: (@value, @direction='ASC') -> null
   toString: -> "#{@value} #{@direction}"
 
+exports.Offset = class Offset
+  constructor: (@row_count, @limit) -> null
+  toString: -> "OFFSET #{@row_count} ROWS" +
+    (if @limit then "\nFETCH NEXT #{@limit} ROWS ONLY" else "")
+
 exports.Limit = class Limit
-  constructor: (@value) -> null
-  toString: -> "LIMIT #{@value}"
+  constructor: (@value, @offset) -> null
+  toString: -> "LIMIT #{@value}" + (if @offset then "\nOFFSET #{@offset}" else "")
 
 exports.Table = class Table
-  constructor: (@name, @win=null, @winFn=null, @winArg=null) -> null
+  constructor: (@name, @alias=null, @win=null, @winFn=null, @winArg=null) -> null
   toString: ->
     if @win
       "#{@name}.#{@win}:#{@winFn}(#{@winArg})"
+    else if @alias
+      "#{@name} AS #{@alias}"
     else
       @name.toString()
 
@@ -118,6 +145,10 @@ exports.Having = class Having
 exports.Op = class Op
   constructor: (@operation, @left, @right) -> null
   toString: -> "(#{@left} #{@operation.toUpperCase()} #{@right})"
+
+exports.UnaryOp = class UnaryOp
+  constructor: (@operator, @operand) -> null
+  toString: -> "(#{@operator.toUpperCase()} #{@operand})"
 
 exports.Field = class Field
   constructor: (@field, @name=null) -> null

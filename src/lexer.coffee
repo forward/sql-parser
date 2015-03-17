@@ -17,9 +17,11 @@ class Lexer
                        @mathToken() or
                        @dotToken() or
                        @conditionalToken() or
-                       @inToken() or
+                       @subSelectOpToken() or
+                       @subSelectUnaryOpToken() or
                        @numberToken() or
                        @stringToken() or
+                       @parameterToken() or
                        @parensToken() or
                        @whitespaceToken() or
                        @literalToken()
@@ -80,7 +82,15 @@ class Lexer
     @tokenizeFromWord('ON') or
     @tokenizeFromWord('AS') or
     @tokenizeFromWord('UNION') or
-    @tokenizeFromWord('ALL')
+    @tokenizeFromWord('ALL') or
+    @tokenizeFromWord('LIMIT') or
+    @tokenizeFromWord('OFFSET') or
+    @tokenizeFromWord('FETCH') or
+    @tokenizeFromWord('ROW') or
+    @tokenizeFromWord('ROWS') or
+    @tokenizeFromWord('ONLY') or
+    @tokenizeFromWord('NEXT') or
+    @tokenizeFromWord('FIRST')
 
   dotToken: -> @tokenizeFromWord('DOT', '.')
   operatorToken:    -> @tokenizeFromList('OPERATOR', SQL_OPERATORS)
@@ -88,7 +98,8 @@ class Lexer
     @tokenizeFromList('MATH', MATH) or
     @tokenizeFromList('MATH_MULTI', MATH_MULTI)
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
-  inToken:          -> @tokenizeFromList('IN', SQL_IN)
+  subSelectOpToken: -> @tokenizeFromList('SUB_SELECT_OP', SUB_SELECT_OP)
+  subSelectUnaryOpToken: -> @tokenizeFromList('SUB_SELECT_UNARY_OP', SUB_SELECT_UNARY_OP)
   functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
   sortOrderToken:   -> @tokenizeFromList('DIRECTION', SQL_SORT_ORDERS)
   booleanToken:     -> @tokenizeFromList('BOOLEAN', BOOLEAN)
@@ -97,6 +108,7 @@ class Lexer
   seperatorToken:   -> @tokenizeFromRegex('SEPARATOR', SEPARATOR)
   literalToken:     -> @tokenizeFromRegex('LITERAL', LITERAL, 1, 0)
   numberToken:      -> @tokenizeFromRegex('NUMBER', NUMBER)
+  parameterToken:   -> @tokenizeFromRegex('PARAMETER', PARAMETER)
   stringToken:      ->
     @tokenizeFromRegex('STRING', STRING, 1, 0) ||
     @tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0)
@@ -124,11 +136,11 @@ class Lexer
   regexEscape: (str) ->
     str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
 
-  SQL_KEYWORDS        = ['SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'AS']
   SQL_FUNCTIONS       = ['AVG', 'COUNT', 'MIN', 'MAX', 'SUM']
   SQL_SORT_ORDERS     = ['ASC', 'DESC']
-  SQL_OPERATORS       = ['=', '>', '<', 'LIKE', 'IS NOT', 'IS']
-  SQL_IN              = ['IN']
+  SQL_OPERATORS       = ['=', '!=', '>=', '>', '<=', '<>', '<', 'LIKE', 'IS NOT', 'IS']
+  SUB_SELECT_OP       = ['IN', 'NOT IN', 'ANY', 'ALL', 'SOME']
+  SUB_SELECT_UNARY_OP = ['EXISTS']
   SQL_CONDITIONALS    = ['AND', 'OR']
   BOOLEAN             = ['TRUE', 'FALSE', 'NULL']
   MATH                = ['+', '-']
@@ -137,6 +149,7 @@ class Lexer
   SEPARATOR           = /^,/
   WHITESPACE          = /^[ \n\r]+/
   LITERAL             = /^`?([a-z_][a-z0-9_]{0,})`?/i
+  PARAMETER           = /^\$[0-9]+/
   NUMBER              = /^[0-9]+(\.[0-9]+)?/
   STRING              = /^'([^\\']*(?:\\.[^\\']*)*)'/
   DBLSTRING           = /^"([^\\"]*(?:\\.[^\\"]*)*)"/

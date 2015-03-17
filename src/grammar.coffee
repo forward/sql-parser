@@ -50,11 +50,13 @@ grammar =
 
   Table: [
     o 'Literal',                                          -> new Table($1)
+    o 'Literal Literal',                                  -> new Table($1, $2)
+    o 'Literal AS Literal',                               -> new Table($1, $3)
     o 'LEFT_PAREN List RIGHT_PAREN',                      -> $2
     o 'LEFT_PAREN Query RIGHT_PAREN',                     -> new SubSelect($2)
     o 'LEFT_PAREN Query RIGHT_PAREN Literal',             -> new SubSelect($2, $4)
     o 'Literal WINDOW WINDOW_FUNCTION LEFT_PAREN Number RIGHT_PAREN',
-                                                          -> new Table($1, $2, $3, $5)
+                                                          -> new Table($1, null, $2, $3, $5)
   ]
 
   Unions: [
@@ -88,10 +90,13 @@ grammar =
 
   LimitClause: [
     o 'LIMIT Number',                                     -> new Limit($2)
+    o 'LIMIT Number SEPARATOR Number',                    -> new Limit($4, $2)
+    o 'LIMIT Number OFFSET Number',                       -> new Limit($2, $4)
   ]
 
   OrderClause: [
     o 'ORDER BY OrderArgs',                               -> new Order($3)
+    o 'ORDER BY OrderArgs OffsetClause',                  -> new Order($3, $4)
   ]
 
   OrderArgs: [
@@ -102,6 +107,22 @@ grammar =
   OrderArg: [
     o 'Value',                                            -> new OrderArgument($1, 'ASC')
     o 'Value DIRECTION',                                  -> new OrderArgument($1, $2)
+  ]
+
+  OffsetClause: [
+    # MS SQL Server 2012+
+    o 'OFFSET OffsetRows',                                -> new Offset($2)
+    o 'OFFSET OffsetRows FetchClause',                    -> new Offset($2, $3)
+  ]
+
+  OffsetRows: [
+    o 'Number ROW',                                       -> $1
+    o 'Number ROWS',                                      -> $1
+  ]
+
+  FetchClause: [
+    o 'FETCH FIRST OffsetRows ONLY',                      -> $3
+    o 'FETCH NEXT OffsetRows ONLY',                       -> $3
   ]
 
   GroupClause: [
@@ -124,8 +145,14 @@ grammar =
     o 'Expression MATH_MULTI Expression',                 -> new Op($2, $1, $3)
     o 'Expression OPERATOR Expression',                   -> new Op($2, $1, $3)
     o 'Expression CONDITIONAL Expression',                -> new Op($2, $1, $3)
-    o 'Value IN Table',                                   -> new Op($2, $1, $3)
+    o 'Value SUB_SELECT_OP LEFT_PAREN List RIGHT_PAREN',  -> new Op($2, $1, $4)
+    o 'Value SUB_SELECT_OP SubSelectExpression',          -> new Op($2, $1, $3)
+    o 'SUB_SELECT_UNARY_OP SubSelectExpression',          -> new UnaryOp($1, $2)
     o 'Value'
+  ]
+
+  SubSelectExpression: [
+    o 'LEFT_PAREN Query RIGHT_PAREN',                     -> new SubSelect($2)
   ]
 
   Value: [
@@ -135,6 +162,7 @@ grammar =
     o 'Function'
     o 'UserFunction'
     o 'Boolean'
+    o 'Parameter'
   ]
 
   List: [
@@ -149,6 +177,10 @@ grammar =
     o 'BOOLEAN',                                           -> new BooleanValue($1)
   ]
 
+  Parameter: [
+    o 'PARAMETER',                                        -> new ParameterValue($1)
+  ]
+
   String: [
     o 'STRING',                                           -> new StringValue($1, "'")
     o 'DBLSTRING',                                        -> new StringValue($1, '"')
@@ -160,11 +192,16 @@ grammar =
   ]
 
   Function: [
-    o "FUNCTION LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
+    o "FUNCTION LEFT_PAREN AggregateArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
   ]
 
   UserFunction: [
-    o "LITERAL LEFT_PAREN ArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3, true)
+    o "LITERAL LEFT_PAREN AggregateArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3, true)
+  ]
+
+  AggregateArgumentList: [
+    o 'ArgumentList',                                    -> new ArgumentListValue($1)
+    o 'DISTINCT ArgumentList',                           -> new ArgumentListValue($2, true)
   ]
 
   ArgumentList: [

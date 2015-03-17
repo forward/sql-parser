@@ -4,7 +4,7 @@ parser = require("../lib/parser")
 parse = (query) ->
   parser.parse(lexer.tokenize(query))
 
-describe "SQL Grammer", ->
+describe "SQL Grammar", ->
   describe "SELECT Queries", ->
 
     it "parses ORDER BY clauses", ->
@@ -12,6 +12,40 @@ describe "SQL Grammer", ->
       SELECT *
         FROM `my_table`
         ORDER BY `x` DESC
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROWS", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROWS").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROW", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROW").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROW FETCH FIRST n ONLY", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROW FETCH FIRST 15 ROW ONLY").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+        FETCH NEXT 15 ROWS ONLY
+      """
+
+    it "parses ORDER BY clauses with OFFSET n ROW FETCH NEXT n ONLY", ->
+      parse("SELECT * FROM my_table ORDER BY x DESC OFFSET 10 ROW FETCH NEXT 15 ROWS ONLY").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `x` DESC
+        OFFSET 10 ROWS
+        FETCH NEXT 15 ROWS ONLY
       """
 
     it "parses GROUP BY clauses", ->
@@ -28,9 +62,40 @@ describe "SQL Grammer", ->
         LIMIT 10
       """
 
+    it "parses LIMIT clauses after ORDER BY", ->
+      parse("SELECT * FROM my_table ORDER BY cat DESC LIMIT 10").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        ORDER BY `cat` DESC
+        LIMIT 10
+      """
+
+    it "parses LIMIT clauses with comma separated offset", ->
+      parse("SELECT * FROM my_table LIMIT 30, 10").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        LIMIT 10
+        OFFSET 30
+      """
+
+    it "parses LIMIT clauses with OFFSET keyword", ->
+      parse("SELECT * FROM my_table LIMIT 10 OFFSET 30").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        LIMIT 10
+        OFFSET 30
+      """
+
     it "parses SELECTs with FUNCTIONs", ->
       parse("SELECT a, COUNT(1, b) FROM my_table LIMIT 10").toString().should.eql """
       SELECT `a`, COUNT(1, `b`)
+        FROM `my_table`
+        LIMIT 10
+      """
+
+    it "parses COUNT(DISTINCT field)", ->
+      parse("select a, count(distinct b) FROM my_table limit 10").toString().should.eql """
+      SELECT `a`, COUNT(DISTINCT `b`)
         FROM `my_table`
         LIMIT 10
       """
@@ -228,7 +293,7 @@ describe "SQL Grammer", ->
         WHERE (`foo` = "I'm")
       """
 
-  describe "IN clauses", ->
+  describe "subselect clauses", ->
     it "parses an IN clause containing a list", ->
       parse("""select * from a where x in (1,2,3)""").toString().should.eql """
       SELECT *
@@ -246,6 +311,39 @@ describe "SQL Grammer", ->
         ))
       """
 
+    it "parses a NOT IN clause containing a query", ->
+      parse("""select * from a where x not in (select foo from bar)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`x` NOT IN (
+          SELECT `foo`
+            FROM `bar`
+        ))
+      """
+
+    it "parses an EXISTS clause containing a query", ->
+      parse("""select * from a where exists (select foo from bar)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (EXISTS (
+          SELECT `foo`
+            FROM `bar`
+        ))
+      """
+
+  describe "aliases", ->
+    it "parses aliased table names", ->
+      parse("""select * from a b""").toString().should.eql """
+      SELECT *
+        FROM `a` AS `b`
+      """
+
+    it "parses aliased table names with as", ->
+      parse("""select * from a as b""").toString().should.eql """
+      SELECT *
+        FROM `a` AS `b`
+      """
+
   describe "STARS", ->
     it "parses stars as multiplcation", ->
       parse('SELECT * FROM foo WHERE a = 1*2').toString().should.eql """
@@ -253,3 +351,12 @@ describe "SQL Grammer", ->
         FROM `foo`
         WHERE (`a` = (1 * 2))
       """
+
+  describe "Parameters", ->
+    it "parses query parameters", ->
+      parse('select * from foo where bar = $12').toString().should.eql """
+      SELECT *
+        FROM `foo`
+        WHERE (`bar` = $12)
+      """
+
