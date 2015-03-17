@@ -2,6 +2,9 @@
   "name": "sql-parser",
   "description": "Lexer and Parser for SQL Syntax",
   "version": "0.4.1",
+  "scripts": {
+    "test": "./node_modules/.bin/cake build && ./node_modules/.bin/mocha --require should --compilers coffee:coffee-script/register"
+  },
   "author": {
     "name": "Andy Kent",
     "email": "andy@forward.co.uk"
