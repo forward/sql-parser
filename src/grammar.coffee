@@ -82,6 +82,8 @@ grammar =
     o 'RIGHT INNER JOIN Table ON Expression',             -> new Join($4, $6, 'RIGHT', 'INNER')
     o 'LEFT OUTER JOIN Table ON Expression',              -> new Join($4, $6, 'LEFT', 'OUTER')
     o 'RIGHT OUTER JOIN Table ON Expression',             -> new Join($4, $6, 'RIGHT', 'OUTER')
+    o 'INNER JOIN Table ON Expression',                   -> new Join($3, $5, 'INNER')
+    o 'OUTER JOIN Table ON Expression',                   -> new Join($3, $5, 'OUTER')
   ]
 
   WhereClause: [
