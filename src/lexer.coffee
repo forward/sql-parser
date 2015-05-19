@@ -17,6 +17,7 @@ class Lexer
                        @mathToken() or
                        @dotToken() or
                        @conditionalToken() or
+                       @betweenToken() or
                        @subSelectOpToken() or
                        @subSelectUnaryOpToken() or
                        @numberToken() or
@@ -98,6 +99,7 @@ class Lexer
     @tokenizeFromList('MATH', MATH) or
     @tokenizeFromList('MATH_MULTI', MATH_MULTI)
   conditionalToken: -> @tokenizeFromList('CONDITIONAL', SQL_CONDITIONALS)
+  betweenToken:     -> @tokenizeFromList('BETWEEN', SQL_BETWEENS)
   subSelectOpToken: -> @tokenizeFromList('SUB_SELECT_OP', SUB_SELECT_OP)
   subSelectUnaryOpToken: -> @tokenizeFromList('SUB_SELECT_UNARY_OP', SUB_SELECT_UNARY_OP)
   functionToken:    -> @tokenizeFromList('FUNCTION', SQL_FUNCTIONS)
@@ -142,6 +144,7 @@ class Lexer
   SUB_SELECT_OP       = ['IN', 'NOT IN', 'ANY', 'ALL', 'SOME']
   SUB_SELECT_UNARY_OP = ['EXISTS']
   SQL_CONDITIONALS    = ['AND', 'OR']
+  SQL_BETWEENS        = ['BETWEEN', 'NOT BETWEEN']
   BOOLEAN             = ['TRUE', 'FALSE', 'NULL']
   MATH                = ['+', '-']
   MATH_MULTI          = ['/', '*']
