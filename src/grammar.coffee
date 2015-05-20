@@ -153,7 +153,7 @@ grammar =
   ]
 
   BetweenExpression: [
-    o 'Expression CONDITIONAL Expression',                -> new BetweenOp($1, $3)
+    o 'Expression CONDITIONAL Expression',                -> new BetweenOp([$1, $3])
   ]
 
   SubSelectExpression: [

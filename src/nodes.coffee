@@ -151,8 +151,8 @@ exports.UnaryOp = class UnaryOp
   toString: -> "(#{@operator.toUpperCase()} #{@operand})"
 
 exports.BetweenOp = class BetweenOp
-  constructor: (@min, @max) -> null
-  toString: -> "#{@min} AND #{@max}"
+  constructor: (@value) -> null
+  toString: -> "#{@value.join(' AND ')}"
 
 exports.Field = class Field
   constructor: (@field, @name=null) -> null
