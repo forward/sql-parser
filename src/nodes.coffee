@@ -150,6 +150,10 @@ exports.UnaryOp = class UnaryOp
   constructor: (@operator, @operand) -> null
   toString: -> "(#{@operator.toUpperCase()} #{@operand})"
 
+exports.BetweenOp = class BetweenOp
+  constructor: (@value) -> null
+  toString: -> "#{@value.join(' AND ')}"
+
 exports.Field = class Field
   constructor: (@field, @name=null) -> null
   toString: -> if @name then "#{@field} AS #{@name}" else @field.toString()
