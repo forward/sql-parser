@@ -86,6 +86,12 @@ describe "SQL Grammar", ->
         OFFSET 30
       """
 
+    it "parses SELECTs with FUNCTIONs without arguments", ->
+      parse("SELECT X(Y(Z())) FROM X").toString().should.eql """
+      SELECT X(Y(Z()))
+        FROM `X`
+      """
+
     it "parses SELECTs with FUNCTIONs", ->
       parse("SELECT a, COUNT(1, b) FROM my_table LIMIT 10").toString().should.eql """
       SELECT `a`, COUNT(1, `b`)
@@ -361,7 +367,7 @@ describe "SQL Grammar", ->
       """
 
   describe "STARS", ->
-    it "parses stars as multiplcation", ->
+    it "parses stars as multiplication", ->
       parse('SELECT * FROM foo WHERE a = 1*2').toString().should.eql """
       SELECT *
         FROM `foo`
