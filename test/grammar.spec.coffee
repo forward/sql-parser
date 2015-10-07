@@ -301,6 +301,15 @@ describe "SQL Grammar", ->
       """
 
   describe "subselect clauses", ->
+    it "parses a subselect field", ->
+      parse("""select (select x from y) from a""").toString().should.eql """
+      SELECT (
+        SELECT `x`
+          FROM `y`
+      )
+        FROM `a`
+      """
+
     it "parses an IN clause containing a list", ->
       parse("""select * from a where x in (1,2,3)""").toString().should.eql """
       SELECT *
