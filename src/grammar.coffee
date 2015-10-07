@@ -149,6 +149,7 @@ grammar =
     o 'Value SUB_SELECT_OP LEFT_PAREN List RIGHT_PAREN',  -> new Op($2, $1, $4)
     o 'Value SUB_SELECT_OP SubSelectExpression',          -> new Op($2, $1, $3)
     o 'SUB_SELECT_UNARY_OP SubSelectExpression',          -> new UnaryOp($1, $2)
+    o 'SubSelectExpression'
     o 'Value'
   ]
 
@@ -201,6 +202,7 @@ grammar =
   ]
 
   UserFunction: [
+    o "LITERAL LEFT_PAREN RIGHT_PAREN",                           -> new FunctionValue($1, null, true)
     o "LITERAL LEFT_PAREN AggregateArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3, true)
   ]
 
