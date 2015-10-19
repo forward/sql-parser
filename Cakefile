@@ -1,5 +1,6 @@
 {spawn, exec} = require 'child_process'
 fs = require('fs')
+require('coffee-script/register')
 
 run = (args, cb) ->
   proc =         spawn './node_modules/.bin/coffee', args
