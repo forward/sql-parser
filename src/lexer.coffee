@@ -41,6 +41,12 @@ class Lexer
   token: (name, value) ->
     @tokens.push([name, value, @currentLine])
 
+  tokenizeFromStringRegex: (name, regex, part=0, lengthPart=part, output=true) ->
+    return 0 unless match = regex.exec(@chunk)
+    partMatch = match[part].replace(/''/g, "'")
+    @token(name, partMatch) if output
+    return match[lengthPart].length
+
   tokenizeFromRegex: (name, regex, part=0, lengthPart=part, output=true) ->
     return 0 unless match = regex.exec(@chunk)
     partMatch = match[part]
@@ -112,7 +118,7 @@ class Lexer
   numberToken:      -> @tokenizeFromRegex('NUMBER', NUMBER)
   parameterToken:   -> @tokenizeFromRegex('PARAMETER', PARAMETER)
   stringToken:      ->
-    @tokenizeFromRegex('STRING', STRING, 1, 0) ||
+    @tokenizeFromStringRegex('STRING', STRING, 1, 0) ||
     @tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0)
 
 
@@ -146,7 +152,7 @@ class Lexer
   SQL_CONDITIONALS    = ['AND', 'OR']
   SQL_BETWEENS        = ['BETWEEN', 'NOT BETWEEN']
   BOOLEAN             = ['TRUE', 'FALSE', 'NULL']
-  MATH                = ['+', '-']
+  MATH                = ['+', '-', '||', '&&']
   MATH_MULTI          = ['/', '*']
   STAR                = /^\*/
   SEPARATOR           = /^,/
@@ -154,7 +160,7 @@ class Lexer
   LITERAL             = /^`?([a-z_][a-z0-9_]{0,})`?/i
   PARAMETER           = /^\$[0-9]+/
   NUMBER              = /^[0-9]+(\.[0-9]+)?/
-  STRING              = /^'([^\\']*(?:\\.[^\\']*)*)'/
+  STRING              = /^'((?:[^\\']+?|\\.|'')*)'(?!')/
   DBLSTRING           = /^"([^\\"]*(?:\\.[^\\"]*)*)"/
 
 

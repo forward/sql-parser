@@ -55,7 +55,9 @@ exports.LiteralValue = class LiteralValue
 
 exports.StringValue = class StringValue
   constructor: (@value, @quoteType="''") -> null
-  toString: -> "#{@quoteType}#{@value}#{@quoteType}"
+  toString: ->
+    escaped = if @quoteType is "'" then @value.replace /(^|[^\\])'/g, "$1''" else @value
+    "#{@quoteType}#{escaped}#{@quoteType}"
 
 exports.NumberValue = class LiteralValue
   constructor: (value) -> @value = Number(value)
