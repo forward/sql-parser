@@ -292,11 +292,25 @@ describe "SQL Grammar", ->
         WHERE (`foo` = 'I\\'m')
       """
 
+    it "parses single quote", ->
+      parse("select * from a where foo = ''''").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`foo` = '''')
+      """
+
     it "allows using double quotes", ->
       parse('select * from a where foo = "a"').toString().should.eql """
       SELECT *
         FROM `a`
         WHERE (`foo` = "a")
+      """
+
+    it "allows using two single quotes", ->
+      parse("select * from a where foo = 'I''m'").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (`foo` = 'I''m')
       """
 
     it "allows nesting different quote styles", ->

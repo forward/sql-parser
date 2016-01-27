@@ -55,6 +55,27 @@
       return this.tokens.push([name, value, this.currentLine]);
     };
 
+    Lexer.prototype.tokenizeFromStringRegex = function(name, regex, part, lengthPart, output) {
+      var match, partMatch;
+      if (part == null) {
+        part = 0;
+      }
+      if (lengthPart == null) {
+        lengthPart = part;
+      }
+      if (output == null) {
+        output = true;
+      }
+      if (!(match = regex.exec(this.chunk))) {
+        return 0;
+      }
+      partMatch = match[part].replace(/''/g, "'");
+      if (output) {
+        this.token(name, partMatch);
+      }
+      return match[lengthPart].length;
+    };
+
     Lexer.prototype.tokenizeFromRegex = function(name, regex, part, lengthPart, output) {
       var match, partMatch;
       if (part == null) {
@@ -169,7 +190,7 @@
     };
 
     Lexer.prototype.stringToken = function() {
-      return this.tokenizeFromRegex('STRING', STRING, 1, 0) || this.tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0);
+      return this.tokenizeFromStringRegex('STRING', STRING, 1, 0) || this.tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0);
     };
 
     Lexer.prototype.parensToken = function() {
@@ -221,7 +242,7 @@
 
     BOOLEAN = ['TRUE', 'FALSE', 'NULL'];
 
-    MATH = ['+', '-'];
+    MATH = ['+', '-', '||', '&&'];
 
     MATH_MULTI = ['/', '*'];
 
@@ -237,7 +258,7 @@
 
     NUMBER = /^[0-9]+(\.[0-9]+)?/;
 
-    STRING = /^'([^\\']*(?:\\.[^\\']*)*)'/;
+    STRING = /^'((?:[^\\']+?|\\.|'')*)'(?!')/;
 
     DBLSTRING = /^"([^\\"]*(?:\\.[^\\"]*)*)"/;
 
@@ -886,7 +907,9 @@ if (typeof module !== 'undefined' && require.main === module) {
     }
 
     StringValue.prototype.toString = function() {
-      return "" + this.quoteType + this.value + this.quoteType;
+      var escaped;
+      escaped = this.quoteType === "'" ? this.value.replace(/(^|[^\\])'/g, "$1''") : this.value;
+      return "" + this.quoteType + escaped + this.quoteType;
     };
 
     return StringValue;
