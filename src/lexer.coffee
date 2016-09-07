@@ -130,9 +130,9 @@ class Lexer
   whitespaceToken: ->
     return 0 unless match = WHITESPACE.exec(@chunk)
     partMatch = match[0]
-    newlines = partMatch.replace(/[^\n]/, '').length
-    @currentLine += newlines
-    @token(name, partMatch) if @preserveWhitespace
+    @token('WHITESPACE', partMatch) if @preserveWhitespace
+    newlines = partMatch.match(/\n/g, '')
+    @currentLine += newlines?.length || 0
     return partMatch.length
 
   regexEscape: (str) ->
