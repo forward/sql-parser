@@ -127,6 +127,13 @@ describe "SQL Grammar", ->
         WHERE (((`a` > 10) AND (`b` BETWEEN 4 AND 6)) AND (`c` = 4))
       """
 
+    it "parses WHERE with LIKE and NOT LIKE clauses", ->
+      parse("SELECT * FROM my_table WHERE foo LIKE '%a' AND bar NOT LIKE 'b%'").toString().should.eql """
+      SELECT *
+        FROM `my_table`
+        WHERE ((`foo` LIKE '%a') AND (`bar` NOT LIKE 'b%'))
+      """
+
     it "parses WHERE with ORDER BY clauses", ->
       parse("SELECT * FROM my_table WHERE x > 1 ORDER BY y").toString().should.eql """
       SELECT *
