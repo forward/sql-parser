@@ -353,6 +353,16 @@ describe "SQL Grammar", ->
         ))
       """
 
+    it "parses an EXISTS clause containing a query", ->
+      parse("""select * from a where not exists (select foo from bar)""").toString().should.eql """
+      SELECT *
+        FROM `a`
+        WHERE (NOT EXISTS (
+          SELECT `foo`
+            FROM `bar`
+        ))
+      """
+
   describe "aliases", ->
     it "parses aliased table names", ->
       parse("""select * from a b""").toString().should.eql """

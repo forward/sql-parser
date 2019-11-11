@@ -213,7 +213,7 @@
 
     SUB_SELECT_OP = ['IN', 'NOT IN', 'ANY', 'ALL', 'SOME'];
 
-    SUB_SELECT_UNARY_OP = ['EXISTS'];
+    SUB_SELECT_UNARY_OP = ['EXISTS', 'NOT EXISTS'];
 
     SQL_CONDITIONALS = ['AND', 'OR'];
 
