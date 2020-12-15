@@ -2,6 +2,7 @@ class Lexer
   constructor: (sql, opts={}) ->
     @sql = sql
     @preserveWhitespace = opts.preserveWhitespace || false
+    @variableTokens = opts.variableTokens || []
     @tokens = []
     @currentLine = 1
     i = 0
@@ -25,6 +26,7 @@ class Lexer
                        @parameterToken() or
                        @parensToken() or
                        @whitespaceToken() or
+                       @variableToken() or
                        @literalToken()
       throw new Error("NOTHING CONSUMED: Stopped at - '#{@chunk.slice(0,30)}'") if bytesConsumed < 1
       i += bytesConsumed
@@ -64,6 +66,10 @@ class Lexer
       ret = @tokenizeFromWord(name, entry)
       break if ret > 0
     ret
+
+  variableToken: ->
+    if @variableTokens.length > 0
+      @tokenizeFromList('VARIABLE', @variableTokens)
 
   keywordToken: ->
     @tokenizeFromWord('SELECT') or
@@ -156,8 +162,8 @@ class Lexer
   NUMBER              = /^[0-9]+(\.[0-9]+)?/
   STRING              = /^'([^\\']*(?:\\.[^\\']*)*)'/
   DBLSTRING           = /^"([^\\"]*(?:\\.[^\\"]*)*)"/
+  VARIABLE             = /^[\{][a-zA-Z0-9]+[\}]/;
 
 
 
 exports.tokenize = (sql, opts) -> (new Lexer(sql, opts)).tokens
-

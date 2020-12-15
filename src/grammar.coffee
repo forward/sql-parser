@@ -169,6 +169,7 @@ grammar =
     o 'UserFunction'
     o 'Boolean'
     o 'Parameter'
+    o 'Variable'
   ]
 
   List: [
@@ -196,6 +197,11 @@ grammar =
     o 'LITERAL',                                          -> new LiteralValue($1)
     o 'Literal DOT LITERAL',                              -> new LiteralValue($1, $3)
   ]
+
+  Variable: [
+    o 'VARIABLE',                                          -> new VariableValue($1,"{","}")
+  ]
+
 
   Function: [
     o "FUNCTION LEFT_PAREN AggregateArgumentList RIGHT_PAREN",     -> new FunctionValue($1, $3)
