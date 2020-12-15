@@ -41,6 +41,10 @@ exports.Union = class Union
     all = if @all then ' ALL' else ''
     "UNION#{all}\n#{@query.toString()}"
 
+exports.VariableValue = class VariableValue
+  constructor: (@value, @openingDelimiter="{", closingDelimiter="}") -> null
+  toString: -> "#{@openingDelimiter}#{@value}#{@closingDelimiter}"
+
 exports.LiteralValue = class LiteralValue
   constructor: (@value, @value2=null) ->
     if @value2
