@@ -10,15 +10,14 @@
     "email": "andy@forward.co.uk"
   },
   "directories": {
-    "lib" : "./lib"
+    "lib": "./lib"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "jison": "0.4.15",
     "coffee-script": "1.8.0",
-    "mocha"     : "2.0.1",
-    "should"    : "4.1.0"
+    "mocha": "2.0.1",
+    "should": "4.1.0"
   },
   "engines": [
     "node"
