@@ -54,6 +54,21 @@ The parser only currently supports SELECT queries but is able to produce a Selec
       FROM `my_table`
       WHERE `foo` = 'bar'
 
+Using Variables
+---------------
+
+The parser and lexer also support setting special variables 
+
+    let tokens = lexer.tokenize('select * from my_table where foo = '{bar}', {
+        variableTokens: '{bar}'
+    })
+    parser.parse(tokens).toString()
+
+    SELECT *
+      FROM `my_table`
+      WHERE `foo` = '{bar}'
+
+
 
 Credits
 -------
